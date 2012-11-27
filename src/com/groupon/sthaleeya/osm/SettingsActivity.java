@@ -15,7 +15,6 @@ import android.widget.Spinner;
 import com.groupon.sthaleeya.Constants;
 import com.groupon.sthaleeya.MerchantImporter;
 import com.groupon.sthaleeya.R;
-import com.groupon.sthaleeya.dbstore.SQLiteStoreHandler;
 import com.groupon.sthaleeya.utils.LocationUtil;
 
 public class SettingsActivity extends Activity {

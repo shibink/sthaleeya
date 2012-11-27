@@ -1,14 +1,9 @@
 package com.groupon.sthaleeya.osm;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import android.database.Cursor;
-import android.util.Log;
 
 import com.groupon.sthaleeya.Constants;
 import com.groupon.sthaleeya.utils.CursorUtils;

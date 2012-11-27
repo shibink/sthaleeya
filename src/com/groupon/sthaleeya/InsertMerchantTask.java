@@ -15,11 +15,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.location.Location;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.groupon.sthaleeya.dbstore.SQLiteStoreHandler;
 import com.groupon.sthaleeya.osm.Merchant;
-import com.groupon.sthaleeya.osm.MerchantBusinessHours;
 import com.groupon.sthaleeya.utils.LocationUtil;
 
 public class InsertMerchantTask extends AsyncTask<Merchant, Void, Merchant[]> {

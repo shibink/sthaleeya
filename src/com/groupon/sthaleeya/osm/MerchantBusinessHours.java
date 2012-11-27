@@ -1,10 +1,10 @@
 package com.groupon.sthaleeya.osm;
 
+import android.database.Cursor;
+
 import com.groupon.sthaleeya.Constants;
 import com.groupon.sthaleeya.utils.CursorUtils;
 
-import android.database.Cursor;
-import android.util.Log;
 
 public class MerchantBusinessHours {
 	private String day;
