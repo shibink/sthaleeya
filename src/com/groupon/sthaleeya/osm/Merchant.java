@@ -10,7 +10,7 @@ import com.groupon.sthaleeya.utils.CursorUtils;
 
 public class Merchant {
     /** unique name identifier. */
-	private int id;
+    private long id;
     private String name;
     private String address;
     private String zipCode;
@@ -19,14 +19,14 @@ public class Merchant {
     private double longitude;
     private double rating;
     private int timezone;
-    private List<MerchantBusinessHours> businessHours=null;
-    
+    private List<MerchantBusinessHours> businessHours = null;
+
     public Merchant() {
 
     }
 
-    public Merchant(String name, String address, String zip, long hourStart,
-            long hourEnd, String phone, double rating, double latitude, double longitude) {
+    public Merchant(String name, String address, String zip, String phone, double rating,
+            double latitude, double longitude) {
         this.name = name;
         this.address = address;
         this.zipCode = zip;
@@ -36,32 +36,39 @@ public class Merchant {
         this.longitude = longitude;
     }
 
-public Merchant(String name, String address, String zip, String phone, double rating) {
+    public Merchant(String name, String address, String zip, String phone, double rating) {
         this.name = name;
         this.address = address;
         this.zipCode = zip;
         this.phoneNumber = phone;
         this.rating = rating;
-        
+
     }
-	public void setId(int id){
-		this.id=id;
-	}
-	public int getId(){
-		return id;
-	}
-    public void setBusinessHours(ArrayList<MerchantBusinessHours> businessHours){
-    	this.businessHours=businessHours;
+
+    public void setId(long id) {
+        this.id = id;
     }
-    public List<MerchantBusinessHours> getBusinessHours(){
-    	return this.businessHours;
+
+    public long getId() {
+        return id;
     }
-    public void setTimezone(int zone){
-    	this.timezone=zone;
+
+    public void setBusinessHours(ArrayList<MerchantBusinessHours> businessHours) {
+        this.businessHours = businessHours;
     }
-    public int getTimezone(){
-    	return this.timezone;
+
+    public List<MerchantBusinessHours> getBusinessHours() {
+        return this.businessHours;
     }
+
+    public void setTimezone(int zone) {
+        this.timezone = zone;
+    }
+
+    public int getTimezone() {
+        return this.timezone;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -73,7 +80,7 @@ public Merchant(String name, String address, String zip, String phone, double ra
     public void setZip(String zip) {
         zipCode = zip;
     }
-  
+
     public void setPhoneNumber(String phone) {
         phoneNumber = phone;
     }
@@ -141,6 +148,7 @@ public Merchant(String name, String address, String zip, String phone, double ra
         Merchant merchant = new Merchant();
 
         // populate ads table data
+        merchant.id = CursorUtils.getLongFromCursor(Constants._ID, cursor);
         merchant.name = CursorUtils.getStringFromCursor(Constants.MERCHANT_NAME, cursor);
         merchant.address = CursorUtils.getStringFromCursor(Constants.MERCHANT_ADDRESS,
                 cursor);
@@ -150,7 +158,7 @@ public Merchant(String name, String address, String zip, String phone, double ra
         merchant.longitude = CursorUtils.getDoubleFromCursor(Constants.LONGITUDE, cursor);
         merchant.phoneNumber = CursorUtils.getStringFromCursor(Constants.PHONE_NUM,
                 cursor);
-       
+
         return merchant;
     }
 }

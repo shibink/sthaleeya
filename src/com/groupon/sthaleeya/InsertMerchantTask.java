@@ -13,18 +13,14 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import android.location.Location;
 import android.os.AsyncTask;
 
 import com.groupon.sthaleeya.dbstore.SQLiteStoreHandler;
 import com.groupon.sthaleeya.osm.Merchant;
-import com.groupon.sthaleeya.utils.LocationUtil;
 
 public class InsertMerchantTask extends AsyncTask<Merchant, Void, Merchant[]> {
-	public static int getZone(double lat,double lon){
+	public int getZone(double lat,double lon){
    	 try {
-            
-
             HttpPost httppost = new HttpPost(
                     "http://www.earthtools.org/timezone/"+lat+"/"+lon);
             HttpClient client = new DefaultHttpClient();
@@ -54,17 +50,16 @@ public class InsertMerchantTask extends AsyncTask<Merchant, Void, Merchant[]> {
         if (merchants == null || merchants.length == 0) {
             return null;
         }
-        Location location;
+        //Location location;
         for (int i = 0; i < merchants.length; i++) {
-            String address = merchants[i].getAddress();
+            /*String address = merchants[i].getAddress();
             location = LocationUtil.getLocation(address);
             if (location != null) {
                 merchants[i].setLatitude(location.getLatitude());
                 merchants[i].setLongitude(location.getLongitude());
-            }
-            int zone=InsertMerchantTask.getZone(location.getLatitude(), location.getLongitude());
+            }*/
+            int zone=getZone(merchants[i].getLatitude(), merchants[i].getLongitude());
             
-           // Log.i("zone",zone+"");
             merchants[i].setTimezone(zone);
         }
         return merchants;

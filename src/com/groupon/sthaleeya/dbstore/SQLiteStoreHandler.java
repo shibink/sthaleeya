@@ -69,24 +69,24 @@ public class SQLiteStoreHandler {
     }
 
     public long insertMerchants(final List<Merchant> merchants) {
-        long ret = -1;
+        long rowId = -1;
         SQLiteDatabase db = DbHelper.getInstance().getWritableDatabase();
 
         if (db == null) {
-            return ret;
+            return rowId;
         }
 
         db.beginTransaction();
         try {
             for (Merchant merchant : merchants) {
                 ContentValues initialValues = constructMerchantInfo(merchant);
-                ret = db.insertOrThrow(Constants.MERCHANTS_TABLE, null, initialValues);
+                rowId = db.insertOrThrow(Constants.MERCHANTS_TABLE, null, initialValues);
                 List<MerchantBusinessHours> businesshours=merchant.getBusinessHours();
                 for(int i=0;i<businesshours.size();i++){
-                	ContentValues businessvalues=constructBusinessHours(businesshours.get(i));
-                	ret=db.insertOrThrow(Constants.BUSINESS_TIMINGS_TABLE, null, businessvalues);
+                	ContentValues businessvalues=constructBusinessHours(rowId, businesshours.get(i));
+                	db.insertOrThrow(Constants.BUSINESS_TIMINGS_TABLE, null, businessvalues);
                 }
-                if (ret < 0) {
+                if (rowId < 0) {
                     continue;
                 }
             }
@@ -97,7 +97,7 @@ public class SQLiteStoreHandler {
             db.endTransaction();
         }
 
-        return ret;
+        return rowId;
     }
 
     /**
@@ -118,9 +118,9 @@ public class SQLiteStoreHandler {
         /*fill here*/
         return initialValues;
     }
-
-    private ContentValues constructBusinessHours(final MerchantBusinessHours businessHours){
+    private ContentValues constructBusinessHours(long id, final MerchantBusinessHours businessHours){
     	ContentValues businessValues=new ContentValues();
+    	businessValues.put(Constants.MERCHANT_ID, id);
     	businessValues.put(Constants.BUSINESS_DAY, businessHours.getDay());
     	businessValues.put(Constants.BUSINESS_OPEN_HR, businessHours.getOpenHr());
     	businessValues.put(Constants.BUSINESS_OPEN_MIN, businessHours.getOpenMin());
@@ -180,6 +180,7 @@ public class SQLiteStoreHandler {
     			
     	return 0;
     }
+
     /**
      * 
      * @param table

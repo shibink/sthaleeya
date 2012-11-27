@@ -12,6 +12,7 @@ public class MerchantBusinessHours {
 	private int openMin;
 	private int closeHr;
 	private int closeMin;
+
 	public MerchantBusinessHours() {
 
     }

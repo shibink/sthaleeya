@@ -14,6 +14,7 @@ public class Constants {
     /**
      * name
      */
+    public static final String _ID = "_id";
     public static final String MERCHANT_NAME = "name";
     public static final String BUSINESS_MERCHANT_ID = "merchant_id";
     
@@ -51,7 +52,7 @@ public class Constants {
     /**
      * Database Version
      */
-    public static final int OSM_DATABASE_VERSION = 13;
+    public static final int OSM_DATABASE_VERSION = 14;
 
     /**
      * DB table
@@ -67,6 +68,7 @@ public class Constants {
     /*
      * Time zone 
      */
+    public static final String MERCHANT_ID="merchant_id";
     public static final String TIMEZONE= "timezone";
     public static final String BUSINESS_TIMINGS_TABLE="business_timings";
     public static final String BUSINESS_DAY="day";

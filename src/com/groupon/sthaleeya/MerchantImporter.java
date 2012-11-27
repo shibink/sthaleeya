@@ -22,7 +22,7 @@ public class MerchantImporter {
         List<Merchant> merchants = new ArrayList<Merchant>();
 
         try {
-            InputStream inputStream = context.getAssets().open("new.csv");
+            InputStream inputStream = context.getAssets().open("merchants.csv");
             BufferedReader bis = new BufferedReader(new InputStreamReader(inputStream));
             String line = null;
             bis.readLine(); // Throw away first line
@@ -34,7 +34,8 @@ public class MerchantImporter {
                 }
                 try {
                 	
-                    Merchant merchant = new Merchant(parts[1], parts[2], parts[5], parts[7], 2.5);
+                    Merchant merchant = new Merchant(parts[1], parts[2], parts[5], parts[7], 2.5, 
+                            Double.parseDouble(parts[28]), Double.parseDouble(parts[29]));
                     ArrayList<MerchantBusinessHours> merchantbusinesshours=new ArrayList<MerchantBusinessHours>();
                     MerchantBusinessHours businessHours=new MerchantBusinessHours("sun",parts[8],parts[9]);
                     merchantbusinesshours.add(businessHours);
