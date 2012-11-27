@@ -1,9 +1,7 @@
 package com.groupon.sthaleeya.osm;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.util.GeoPoint;
@@ -49,7 +47,6 @@ public class OSMLoader extends Activity implements LocationListener {
     private static final double DEF_LATITUDE = 13.0878;
     private static final double DEF_LONGITUDE = 80.2785;
     private static final float ONE_MILE = 1609.34f; // 1 mile = 1609.34 meter
-    private static final String[] days={"","sun","mon","tue","wed","thu","fri","sat"};
     private static final int REQ_SETTINGS = 0;
 
     private Category category = Category.ALL;
@@ -248,8 +245,6 @@ public class OSMLoader extends Activity implements LocationListener {
             Location location = new Location(LocationManager.GPS_PROVIDER);
             location.setLatitude(merchant.getLatitude());
             location.setLongitude(merchant.getLongitude());
-           // Log.i("zone","GMT"+merchant.getTimezone());
-            
     		
             if (currentLocation.distanceTo(location) <= (ONE_MILE * localRadius)) {
             	int check=sqlite.getBusinessHour(merchant);
