@@ -50,7 +50,7 @@ public class Constants {
     /**
      * Database Version
      */
-    public static final int OSM_DATABASE_VERSION = 6;
+    public static final int OSM_DATABASE_VERSION = 8;
 
     /**
      * DB table
