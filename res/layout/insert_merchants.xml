@@ -1,0 +1,161 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/background_dark" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="20dip"
+        android:paddingTop="20dip" >
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:paddingBottom="20dp"
+                android:textSize="15sp"
+                android:text="@string/enter_details"
+                android:textColor="@android:color/white" />
+        
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:text="@string/name"
+                android:textColor="@android:color/white" />
+
+            <EditText
+                android:id="@+id/merchant_name"
+                android:layout_width="180dp"
+                android:layout_height="50dp"
+                android:inputType="text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:text="@string/address"
+                android:textColor="@android:color/white" />
+
+            <EditText
+                android:id="@+id/address"
+                android:layout_width="250dp"
+                android:layout_height="50dp"
+                android:inputType="text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:text="@string/zip_code"
+                android:textColor="@android:color/white" />
+
+            <EditText
+                android:id="@+id/zip_code"
+                android:layout_width="180dp"
+                android:layout_height="50dp"
+                android:inputType="number" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:text="@string/phone_number"
+                android:textColor="@android:color/white" />
+
+            <EditText
+                android:id="@+id/phone_number"
+                android:layout_width="180dp"
+                android:layout_height="50dp"
+                android:inputType="phone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:text="@string/business_hour_start"
+                android:textColor="@android:color/white" />
+
+            <EditText
+                android:id="@+id/business_hour_start"
+                android:layout_width="180dp"
+                android:layout_height="50dp"
+                android:inputType="number" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:text="@string/business_hour_end"
+                android:textColor="@android:color/white" />
+
+            <EditText
+                android:id="@+id/business_hour_end"
+                android:layout_width="180dp"
+                android:layout_height="50dp"
+                android:inputType="number" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:text="@string/ratings"
+                android:textColor="@android:color/white" />
+
+            <EditText
+                android:id="@+id/ratings"
+                android:layout_width="180dp"
+                android:layout_height="50dp"
+                android:inputType="number" />
+        </LinearLayout>
+        <Button
+            android:id="@+id/save_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save_merchant_details" />
+    </LinearLayout>
+</ScrollView>

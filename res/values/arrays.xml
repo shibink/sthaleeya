@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="category_values">
+        <item>ALL</item>
+        <item>FOOD</item>
+        <item>MOVIES</item>
+    </string-array>
+
+    <string-array name="radius_values">
+        <item>1 mi</item>
+        <item>2 mi</item>
+        <item>5 mi</item>
+        <item>10 mi</item>
+        <item>15 mi</item>
+        <item>20 mi</item>
+        <item>30 mi</item>
+        <item>40 mi</item>
+        <item>50 mi</item>
+    </string-array>
+</resources>

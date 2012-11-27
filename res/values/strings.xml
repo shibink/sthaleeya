@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sthaleeya</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="radius">Radius</string>
+    <string name="radius_hint">Local radius</string>
+    <string name="name">Name</string>
+    <string name="save_merchant_details">Save Merchant Information</string>
+    <string name="load_map">Load Map</string>
+    <string name="list_merchants">List Merchants</string>
+    <string name="close_map_view">Close Map View</string>
+    <string name="close">Close</string>
+    <string name="address">Address</string>
+    <string name="zip_code">Zip Code</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="ratings">Ratings</string>
+    <string name="save">Save</string>
+    <string name="set_radius">Set Radius</string>
+    <string name="business_hour_start">Starting Hour</string>
+    <string name="business_hour_end">Ending Hour</string>
+    <string name="enter_details">Enter Merchant Details</string>
+    <string name="mile">Mile</string>
+    <string name="ok">OK</string>
+    <string name="radius_prompt">Select Radius</string>
+    <string name="category_prompt">Choose Category</string>
+    <string name="upload_merchants">Upload Merchants</string>
+    <string name="empty_merchants">No merchants in this range</string>
+</resources>
