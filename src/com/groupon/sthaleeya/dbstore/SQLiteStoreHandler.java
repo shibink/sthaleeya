@@ -2,6 +2,7 @@ package com.groupon.sthaleeya.dbstore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -21,6 +22,8 @@ import com.groupon.sthaleeya.utils.CursorUtils;
 public class SQLiteStoreHandler {
     private static final String SQL_OR_OPERATOR = " OR ";
     private static final String TAG = "SQLiteStoreHandler";
+    private static final String[] days={"","sun","mon","tue","wed","thu","fri","sat"};
+     
 
     public SQLiteStoreHandler() {
     }
@@ -148,7 +151,37 @@ public class SQLiteStoreHandler {
         }
         return merchants;
     }
-
+    public int getBusinessHour(Merchant merchant){
+    	Calendar c=Calendar.getInstance(TimeZone.getTimeZone("GMT"+merchant.getTimezone()));	
+		int day=c.get(Calendar.DAY_OF_WEEK);
+		String day_week=days[day];
+    	MerchantBusinessHours businessHours=new MerchantBusinessHours();
+    	String selection = "merchant_id = "+merchant.getId()+ " and day='"+day_week+"'";
+    	Cursor cursor = null;
+    	try {
+            cursor = getCursor(Constants.BUSINESS_TIMINGS_TABLE, null, selection, null, null,
+                    null, null);
+            
+            if (cursor != null && cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    businessHours = MerchantBusinessHours.getFromCursor(cursor);
+                    break;
+                }
+            }
+        } finally {
+            CursorUtils.safeClose(cursor);
+        }
+    	if((businessHours.getOpenHr()<=Calendar.HOUR_OF_DAY)&&(businessHours.getOpenMin()<=Calendar.MINUTE))
+    		if((businessHours.getCloseHr()>=Calendar.HOUR_OF_DAY)&&(businessHours.getCloseMin()>=Calendar.MINUTE)){
+    			if(businessHours.getCloseHr()<=Calendar.HOUR_OF_DAY+1)
+    				return 1;
+    			else
+    				return 2;
+    		}
+    			
+    			
+    	return 0;
+    }
     /**
      * 
      * @param table

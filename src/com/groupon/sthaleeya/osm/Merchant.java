@@ -15,6 +15,7 @@ import com.groupon.sthaleeya.utils.CursorUtils;
 
 public class Merchant {
     /** unique name identifier. */
+	private int id;
     private String name;
     private String address;
     private String zipCode;
@@ -48,7 +49,12 @@ public Merchant(String name, String address, String zip, String phone, double ra
         this.rating = rating;
         
     }
-    
+	public void setId(int id){
+		this.id=id;
+	}
+	public int getId(){
+		return id;
+	}
     public void setBusinessHours(ArrayList<MerchantBusinessHours> businessHours){
     	this.businessHours=businessHours;
     }

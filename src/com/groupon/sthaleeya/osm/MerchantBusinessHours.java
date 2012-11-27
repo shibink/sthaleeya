@@ -1,5 +1,9 @@
 package com.groupon.sthaleeya.osm;
 
+import com.groupon.sthaleeya.Constants;
+import com.groupon.sthaleeya.utils.CursorUtils;
+
+import android.database.Cursor;
 import android.util.Log;
 
 public class MerchantBusinessHours {
@@ -78,4 +82,16 @@ public class MerchantBusinessHours {
 			this.closeMin=min;
 		}
 	}
+	 public static MerchantBusinessHours getFromCursor(Cursor cursor) {
+		   if ((cursor == null) || (cursor.getCount() <= 0)) {
+	            return null;
+	        }
+
+	        MerchantBusinessHours businessHours = new MerchantBusinessHours();
+	        businessHours.openHr = CursorUtils.getIntegerFromCursor(Constants.BUSINESS_OPEN_HR, cursor);
+	        businessHours.closeHr = CursorUtils.getIntegerFromCursor(Constants.BUSINESS_CLOSE_HR, cursor);
+	        businessHours.closeMin = CursorUtils.getIntegerFromCursor(Constants.BUSINESS_CLOSE_MIN, cursor);
+	        businessHours.closeMin = CursorUtils.getIntegerFromCursor(Constants.BUSINESS_OPEN_MIN, cursor);
+	        return businessHours;
+	   }
 }

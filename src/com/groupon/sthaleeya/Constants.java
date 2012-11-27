@@ -15,6 +15,7 @@ public class Constants {
      * name
      */
     public static final String MERCHANT_NAME = "name";
+    public static final String BUSINESS_MERCHANT_ID = "merchant_id";
     
     /**
      * address
@@ -50,7 +51,7 @@ public class Constants {
     /**
      * Database Version
      */
-    public static final int OSM_DATABASE_VERSION = 8;
+    public static final int OSM_DATABASE_VERSION = 13;
 
     /**
      * DB table

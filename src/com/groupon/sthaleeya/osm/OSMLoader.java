@@ -1,7 +1,9 @@
 package com.groupon.sthaleeya.osm;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.util.GeoPoint;
@@ -47,6 +49,7 @@ public class OSMLoader extends Activity implements LocationListener {
     private static final double DEF_LATITUDE = 13.0878;
     private static final double DEF_LONGITUDE = 80.2785;
     private static final float ONE_MILE = 1609.34f; // 1 mile = 1609.34 meter
+    private static final String[] days={"","sun","mon","tue","wed","thu","fri","sat"};
     private static final int REQ_SETTINGS = 0;
 
     private Category category = Category.ALL;
@@ -245,12 +248,16 @@ public class OSMLoader extends Activity implements LocationListener {
             Location location = new Location(LocationManager.GPS_PROVIDER);
             location.setLatitude(merchant.getLatitude());
             location.setLongitude(merchant.getLongitude());
+           // Log.i("zone","GMT"+merchant.getTimezone());
+            
+    		
             if (currentLocation.distanceTo(location) <= (ONE_MILE * localRadius)) {
-                //if (isBusinessEnding(merchant)) {
-                    // Color code orange icon for merchants getting closed in
-                    // another hour
-                    //item.setMarker(closingMarker);
-                //}
+            	int check=sqlite.getBusinessHour(merchant);
+            	Log.i("dbcheck",check+"");
+            	if(check==1)
+            		item.setMarker(closingMarker);
+            	else if (check ==0) // Closed
+            		continue;
                 overlayItemArray.add(item);
                 listView.append(++i + ". " + merchant.getName() + "\n" + description
                         + "\n\n");
