@@ -48,7 +48,7 @@ public class OSMLoader extends Activity implements LocationListener {
     private static final double DEF_LONGITUDE = 80.2785;
     private static final float ONE_MILE = 1609.34f; // 1 mile = 1609.34 meter
     private static final int REQ_SETTINGS = 0;
-
+    public static enum MERCHANT_STATUS  {CLOSED,ABOUT_TO_CLOSE,OPEN};
     private Category category = Category.ALL;
     private int localRadius = 20; // 20 miles
     private Location defaultLocation;

@@ -15,6 +15,8 @@ import com.groupon.sthaleeya.Category;
 import com.groupon.sthaleeya.Constants;
 import com.groupon.sthaleeya.osm.Merchant;
 import com.groupon.sthaleeya.osm.MerchantBusinessHours;
+import com.groupon.sthaleeya.osm.OSMLoader;
+import com.groupon.sthaleeya.osm.OSMLoader.MERCHANT_STATUS;
 import com.groupon.sthaleeya.utils.CursorUtils;
 
 public class SQLiteStoreHandler {
@@ -149,7 +151,7 @@ public class SQLiteStoreHandler {
         }
         return merchants;
     }
-    public int getBusinessHour(Merchant merchant){
+    public MERCHANT_STATUS getBusinessHour(Merchant merchant){
     	Calendar c=Calendar.getInstance(TimeZone.getTimeZone("GMT"+merchant.getTimezone()));	
 		int day=c.get(Calendar.DAY_OF_WEEK)-1;
 		
@@ -157,6 +159,8 @@ public class SQLiteStoreHandler {
 		String day_week=days[day];
     	MerchantBusinessHours businessHours=new MerchantBusinessHours();
     	String selection = "merchant_id = "+merchant.getId()+ " and day='"+day_week+"'";
+    	Log.i("statuscheck",c.get(Calendar.HOUR_OF_DAY)+"");
+    	Log.i("statuscheck",c.get(Calendar.MINUTE)+"");
     	
     	Cursor cursor = null;
     	try {
@@ -172,16 +176,17 @@ public class SQLiteStoreHandler {
         } finally {
             CursorUtils.safeClose(cursor);
         }
-    	Log.i("statuscheck",c.get(Calendar.HOUR_OF_DAY)+"");
-    	Log.i("statuscheck",c.get(Calendar.MINUTE)+"");
+    	
     	if(((businessHours.getOpenHr()==c.get(Calendar.HOUR_OF_DAY))&&(businessHours.getOpenMin()<=(c.get(Calendar.MINUTE))))||((businessHours.getOpenHr()<=c.get(Calendar.HOUR_OF_DAY))))
-    		if(((businessHours.getCloseHr()==c.get(Calendar.HOUR_OF_DAY))&&(businessHours.getCloseMin()>=(c.get(Calendar.MINUTE))))||(businessHours.getCloseHr()>c.get(Calendar.HOUR_OF_DAY))){			
+    		if(((businessHours.getCloseHr()==c.get(Calendar.HOUR_OF_DAY))&&(businessHours.getCloseMin()>=(c.get(Calendar.MINUTE))))||(businessHours.getCloseHr()>c.get(Calendar.HOUR_OF_DAY))){
+    			
     			if(((businessHours.getCloseHr()==(c.get(Calendar.HOUR_OF_DAY)+1))&&(businessHours.getCloseMin()<=(c.get(Calendar.MINUTE))))||(businessHours.getCloseHr()<(c.get(Calendar.HOUR_OF_DAY))+1))
-    				return 1;
+    				return OSMLoader.MERCHANT_STATUS.ABOUT_TO_CLOSE;
     			else
-    				return 2;
+    				return OSMLoader.MERCHANT_STATUS.OPEN;
     		}
-    	return 0;
+    	return OSMLoader.MERCHANT_STATUS.CLOSED;
+    	
     }
 
     /**

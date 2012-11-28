@@ -38,23 +38,17 @@ public class MerchantImporter {
                     Merchant merchant = new Merchant(parts[1], parts[2], parts[5], parts[7], 2.5, 
                             Double.parseDouble(parts[28]), Double.parseDouble(parts[29]),parts[30]);
                     ArrayList<MerchantBusinessHours> merchantbusinesshours=new ArrayList<MerchantBusinessHours>();
-                    MerchantBusinessHours businessHours=new MerchantBusinessHours("sun",parts[8],parts[9]);
-                    merchantbusinesshours.add(businessHours);
-                    businessHours=new MerchantBusinessHours("mon",parts[10],parts[11]);
-                    merchantbusinesshours.add(businessHours);
-                    businessHours=new MerchantBusinessHours("tue",parts[12],parts[13]);
-                    merchantbusinesshours.add(businessHours);
-                    businessHours=new MerchantBusinessHours("wed",parts[14],parts[15]);
-                    merchantbusinesshours.add(businessHours);
-                    businessHours=new MerchantBusinessHours("thu",parts[16],parts[17]);
-                    merchantbusinesshours.add(businessHours);
-                    businessHours=new MerchantBusinessHours("fri",parts[18],parts[19]);
-                    merchantbusinesshours.add(businessHours);
-                    businessHours=new MerchantBusinessHours("sat",parts[20],parts[21]);
-                    merchantbusinesshours.add(businessHours);
+                    String[] days={"sun","mon","tue","wed","thu","fri","sat"};
+                    for(int i=0;i<7;i++){
+                    	MerchantBusinessHours businessHours;
+                    	if(parts[8+i].equals("24 H")||(parts[8+i].equals("in")))
+                    		businessHours=new MerchantBusinessHours(days[i],"0","24");
+                    	else	
+                    		businessHours=new MerchantBusinessHours(days[i],parts[8+i],parts[9+i]);
+                    	merchantbusinesshours.add(businessHours);
+                    }
                     merchant.setBusinessHours(merchantbusinesshours);
                     merchants.add(merchant);
-                    
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

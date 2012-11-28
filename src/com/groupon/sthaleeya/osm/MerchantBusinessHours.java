@@ -92,7 +92,7 @@ public class MerchantBusinessHours {
 	        businessHours.openHr = CursorUtils.getIntegerFromCursor(Constants.BUSINESS_OPEN_HR, cursor);
 	        businessHours.closeHr = CursorUtils.getIntegerFromCursor(Constants.BUSINESS_CLOSE_HR, cursor);
 	        businessHours.closeMin = CursorUtils.getIntegerFromCursor(Constants.BUSINESS_CLOSE_MIN, cursor);
-	        businessHours.closeMin = CursorUtils.getIntegerFromCursor(Constants.BUSINESS_OPEN_MIN, cursor);
+	        businessHours.openMin = CursorUtils.getIntegerFromCursor(Constants.BUSINESS_OPEN_MIN, cursor);
 	        return businessHours;
 	   }
 }
