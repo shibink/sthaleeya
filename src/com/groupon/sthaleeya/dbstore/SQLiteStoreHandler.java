@@ -20,7 +20,7 @@ import com.groupon.sthaleeya.utils.CursorUtils;
 public class SQLiteStoreHandler {
     private static final String SQL_OR_OPERATOR = " OR ";
     private static final String TAG = "SQLiteStoreHandler";
-    private static final String[] days={"","sun","mon","tue","wed","thu","fri","sat"};
+    private static final String[] days={"sun","mon","tue","wed","thu","fri","sat"};
      
 
     public SQLiteStoreHandler() {
@@ -151,11 +151,13 @@ public class SQLiteStoreHandler {
     }
     public int getBusinessHour(Merchant merchant){
     	Calendar c=Calendar.getInstance(TimeZone.getTimeZone("GMT"+merchant.getTimezone()));	
-		int day=c.get(Calendar.DAY_OF_WEEK);
+		int day=c.get(Calendar.DAY_OF_WEEK)-1;
+		
 		
 		String day_week=days[day];
     	MerchantBusinessHours businessHours=new MerchantBusinessHours();
     	String selection = "merchant_id = "+merchant.getId()+ " and day='"+day_week+"'";
+    	
     	Cursor cursor = null;
     	try {
             cursor = getCursor(Constants.BUSINESS_TIMINGS_TABLE, null, selection, null, null,
@@ -170,15 +172,15 @@ public class SQLiteStoreHandler {
         } finally {
             CursorUtils.safeClose(cursor);
         }
-    	if((businessHours.getOpenHr()<=Calendar.HOUR_OF_DAY)&&(businessHours.getOpenMin()<=Calendar.MINUTE))
-    		if((businessHours.getCloseHr()>=Calendar.HOUR_OF_DAY)&&(businessHours.getCloseMin()>=Calendar.MINUTE)){
-    			if((businessHours.getCloseHr()<=Calendar.HOUR_OF_DAY+1)&&(businessHours.getCloseMin()<=Calendar.MINUTE))
+    	Log.i("statuscheck",c.get(Calendar.HOUR_OF_DAY)+"");
+    	Log.i("statuscheck",c.get(Calendar.MINUTE)+"");
+    	if(((businessHours.getOpenHr()==c.get(Calendar.HOUR_OF_DAY))&&(businessHours.getOpenMin()<=(c.get(Calendar.MINUTE))))||((businessHours.getOpenHr()<=c.get(Calendar.HOUR_OF_DAY))))
+    		if(((businessHours.getCloseHr()==c.get(Calendar.HOUR_OF_DAY))&&(businessHours.getCloseMin()>=(c.get(Calendar.MINUTE))))||(businessHours.getCloseHr()>c.get(Calendar.HOUR_OF_DAY))){			
+    			if(((businessHours.getCloseHr()==(c.get(Calendar.HOUR_OF_DAY)+1))&&(businessHours.getCloseMin()<=(c.get(Calendar.MINUTE))))||(businessHours.getCloseHr()<(c.get(Calendar.HOUR_OF_DAY))+1))
     				return 1;
     			else
     				return 2;
     		}
-    			
-    			
     	return 0;
     }
 
