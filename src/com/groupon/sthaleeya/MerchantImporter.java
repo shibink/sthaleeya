@@ -22,20 +22,21 @@ public class MerchantImporter {
         List<Merchant> merchants = new ArrayList<Merchant>();
 
         try {
-            InputStream inputStream = context.getAssets().open("merchants.csv");
+            InputStream inputStream = context.getAssets().open("merchant-geocode.csv");
             BufferedReader bis = new BufferedReader(new InputStreamReader(inputStream));
             String line = null;
             bis.readLine(); // Throw away first line
             bis.readLine(); // Throw away 2nd line as well
             while ((line = bis.readLine()) != null) {
                 String parts[] = line.split("\t");
-                if (parts.length < 10) {
+               // Log.i("parts length",parts.length+"");
+                if (parts.length < 30) {
                     continue;
                 }
                 try {
                 	
                     Merchant merchant = new Merchant(parts[1], parts[2], parts[5], parts[7], 2.5, 
-                            Double.parseDouble(parts[28]), Double.parseDouble(parts[29]));
+                            Double.parseDouble(parts[28]), Double.parseDouble(parts[29]),parts[30]);
                     ArrayList<MerchantBusinessHours> merchantbusinesshours=new ArrayList<MerchantBusinessHours>();
                     MerchantBusinessHours businessHours=new MerchantBusinessHours("sun",parts[8],parts[9]);
                     merchantbusinesshours.add(businessHours);
@@ -54,8 +55,6 @@ public class MerchantImporter {
                     merchant.setBusinessHours(merchantbusinesshours);
                     merchants.add(merchant);
                     
-                    
-                    new InsertMerchantTask().execute(new Merchant[] { merchant });
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

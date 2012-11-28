@@ -152,6 +152,7 @@ public class SQLiteStoreHandler {
     public int getBusinessHour(Merchant merchant){
     	Calendar c=Calendar.getInstance(TimeZone.getTimeZone("GMT"+merchant.getTimezone()));	
 		int day=c.get(Calendar.DAY_OF_WEEK);
+		
 		String day_week=days[day];
     	MerchantBusinessHours businessHours=new MerchantBusinessHours();
     	String selection = "merchant_id = "+merchant.getId()+ " and day='"+day_week+"'";
@@ -171,7 +172,7 @@ public class SQLiteStoreHandler {
         }
     	if((businessHours.getOpenHr()<=Calendar.HOUR_OF_DAY)&&(businessHours.getOpenMin()<=Calendar.MINUTE))
     		if((businessHours.getCloseHr()>=Calendar.HOUR_OF_DAY)&&(businessHours.getCloseMin()>=Calendar.MINUTE)){
-    			if(businessHours.getCloseHr()<=Calendar.HOUR_OF_DAY+1)
+    			if((businessHours.getCloseHr()<=Calendar.HOUR_OF_DAY+1)&&(businessHours.getCloseMin()<=Calendar.MINUTE))
     				return 1;
     			else
     				return 2;

@@ -25,7 +25,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String CREATE_OSM_TABLE = "create table "
             + Constants.MERCHANTS_TABLE
             + " (_id integer primary key autoincrement, name text not null, address text not null, zip_code text,"
-            + "phone_no text, rating double default 0, timezone int default 0,"
+            + "phone_no text, rating double default 0, timezone varchar(10) default null,"
             + "latitude double default 0, longitude double default 0, category text default 'ALL');";
 
 public static final String CREATE_BUSINESS_TIMINGS_TABLE="create table "

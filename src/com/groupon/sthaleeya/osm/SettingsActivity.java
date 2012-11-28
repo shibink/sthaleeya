@@ -1,5 +1,7 @@
 package com.groupon.sthaleeya.osm;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -13,6 +15,7 @@ import android.widget.Spinner;
 import com.groupon.sthaleeya.Constants;
 import com.groupon.sthaleeya.MerchantImporter;
 import com.groupon.sthaleeya.R;
+import com.groupon.sthaleeya.dbstore.SQLiteStoreHandler;
 import com.groupon.sthaleeya.utils.LocationUtil;
 
 public class SettingsActivity extends Activity {
@@ -59,9 +62,9 @@ public class SettingsActivity extends Activity {
         uploadMerchants.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MerchantImporter.importMerchants(SettingsActivity.this);
-                // SQLiteStoreHandler sqlite = new SQLiteStoreHandler();
-                // sqlite.insertMerchants(merchants);
+            	List<Merchant> merchants=MerchantImporter.importMerchants(SettingsActivity.this);
+                 SQLiteStoreHandler sqlite = new SQLiteStoreHandler();
+                 sqlite.insertMerchants(merchants);
             }
         });
 

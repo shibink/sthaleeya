@@ -60,7 +60,7 @@ public class InsertMerchantTask extends AsyncTask<Merchant, Void, Merchant[]> {
             }*/
             int zone=getZone(merchants[i].getLatitude(), merchants[i].getLongitude());
             
-            merchants[i].setTimezone(zone);
+            //merchants[i].setTimezone(zone);
         }
         return merchants;
     }

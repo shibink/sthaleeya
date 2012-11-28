@@ -18,7 +18,7 @@ public class Merchant {
     private double latitude;
     private double longitude;
     private double rating;
-    private int timezone;
+    private String timezone;
     private List<MerchantBusinessHours> businessHours = null;
 
     public Merchant() {
@@ -26,7 +26,7 @@ public class Merchant {
     }
 
     public Merchant(String name, String address, String zip, String phone, double rating,
-            double latitude, double longitude) {
+            double latitude, double longitude, String timezone) {
         this.name = name;
         this.address = address;
         this.zipCode = zip;
@@ -34,6 +34,7 @@ public class Merchant {
         this.rating = rating;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.timezone=timezone;
     }
 
     public Merchant(String name, String address, String zip, String phone, double rating) {
@@ -61,11 +62,11 @@ public class Merchant {
         return this.businessHours;
     }
 
-    public void setTimezone(int zone) {
+    public void setTimezone(String zone) {
         this.timezone = zone;
     }
 
-    public int getTimezone() {
+    public String getTimezone() {
         return this.timezone;
     }
 
@@ -158,7 +159,7 @@ public class Merchant {
         merchant.longitude = CursorUtils.getDoubleFromCursor(Constants.LONGITUDE, cursor);
         merchant.phoneNumber = CursorUtils.getStringFromCursor(Constants.PHONE_NUM,
                 cursor);
-
+        merchant.timezone = CursorUtils.getStringFromCursor(Constants.TIMEZONE, cursor);
         return merchant;
     }
 }
