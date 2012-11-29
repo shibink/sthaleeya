@@ -52,7 +52,7 @@ public class Constants {
     /**
      * Database Version
      */
-    public static final int OSM_DATABASE_VERSION = 19;
+    public static final int OSM_DATABASE_VERSION = 21;
 
     /**
      * DB table
@@ -76,4 +76,5 @@ public class Constants {
     public static final String BUSINESS_OPEN_MIN="openMin";
     public static final String BUSINESS_CLOSE_HR="closeHr";
     public static final String BUSINESS_CLOSE_MIN="closeMin";
+    public static final String KEY_REFRESH_RATE = "refreshRate";
 }

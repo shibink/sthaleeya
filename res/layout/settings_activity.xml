@@ -6,24 +6,54 @@
     android:paddingBottom="10dp"
     android:paddingTop="10dp" >
 
+    <LinearLayout
+        android:id="@+id/refresh_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:paddingBottom="20dp" >
+
+        <EditText
+            android:id="@+id/refresh_rate_value"
+            android:layout_width="125dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="5dp"
+            android:hint="Refresh Rate"
+            android:inputType="number" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="minutes"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
     <Spinner
         android:id="@+id/radius_spinner"
         android:layout_width="120dp"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="20dp"
         android:entries="@array/radius_values"
         android:prompt="@string/radius_prompt" />
 
-    <Button
-        android:id="@+id/load_map"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/load_map" />
+        android:orientation="horizontal" >
 
-    <Button
-        android:id="@+id/list_merchants"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/list_merchants" />
+        <Button
+            android:id="@+id/load_map"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:text="@string/load_map" />
+
+        <Button
+            android:id="@+id/list_merchants"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/list_merchants" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/upload_merchants"

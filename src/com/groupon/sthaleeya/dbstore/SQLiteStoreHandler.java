@@ -22,8 +22,8 @@ import com.groupon.sthaleeya.utils.CursorUtils;
 public class SQLiteStoreHandler {
     private static final String SQL_OR_OPERATOR = " OR ";
     private static final String TAG = "SQLiteStoreHandler";
-    private static final String[] days={"sun","mon","tue","wed","thu","fri","sat"};
-     
+    private static final String[] days = { "sun", "mon", "tue", "wed", "thu", "fri",
+            "sat" };
 
     public SQLiteStoreHandler() {
     }
@@ -72,6 +72,8 @@ public class SQLiteStoreHandler {
 
     public long insertMerchants(final List<Merchant> merchants) {
         long rowId = -1;
+        Merchant currentMerchant = null;
+        long currentId = -1;
         SQLiteDatabase db = DbHelper.getInstance().getWritableDatabase();
 
         if (db == null) {
@@ -83,19 +85,28 @@ public class SQLiteStoreHandler {
             for (Merchant merchant : merchants) {
                 ContentValues initialValues = constructMerchantInfo(merchant);
                 rowId = db.insertOrThrow(Constants.MERCHANTS_TABLE, null, initialValues);
-                List<MerchantBusinessHours> businesshours=merchant.getBusinessHours();
-                for(int i=0;i<businesshours.size();i++){
-                	ContentValues businessvalues=constructBusinessHours(rowId, businesshours.get(i));
-                	db.insertOrThrow(Constants.BUSINESS_TIMINGS_TABLE, null, businessvalues);
-                }
+                currentMerchant = merchant;
+                currentId = rowId;
                 if (rowId < 0) {
                     continue;
                 }
+                List<MerchantBusinessHours> businesshours = merchant.getBusinessHours();
+                for (int i = 0; i < businesshours.size(); i++) {
+                    ContentValues businessvalues = constructBusinessHours(rowId,
+                            businesshours.get(i));
+                    db.insertOrThrow(Constants.BUSINESS_TIMINGS_TABLE, null,
+                            businessvalues);
+                }
             }
-            db.setTransactionSuccessful();
         } catch (SQLException exception) {
-            Log.e(TAG, "Exception : " + exception.getMessage());
+            if (currentMerchant != null) {
+            Log.e(TAG, "Exception : " + exception.getMessage() + " Name: "+currentMerchant.getName()
+                    + " Address" + currentMerchant.getAddress() + ", ID : " + currentMerchant.getId());
+            } else {
+                Log.e(TAG, "Exception", exception);
+            }
         } finally {
+            db.setTransactionSuccessful();
             db.endTransaction();
         }
 
@@ -117,19 +128,38 @@ public class SQLiteStoreHandler {
         initialValues.put(Constants.MERCHANT_RATING, merchant.getRating());
         initialValues.put(Constants.PHONE_NUM, merchant.getPhoneNumber());
         initialValues.put(Constants.TIMEZONE, merchant.getTimezone());
-        /*fill here*/
+        /* fill here */
         return initialValues;
     }
-    private ContentValues constructBusinessHours(long id, final MerchantBusinessHours businessHours){
-    	ContentValues businessValues=new ContentValues();
-    	businessValues.put(Constants.MERCHANT_ID, id);
-    	businessValues.put(Constants.BUSINESS_DAY, businessHours.getDay());
-    	businessValues.put(Constants.BUSINESS_OPEN_HR, businessHours.getOpenHr());
-    	businessValues.put(Constants.BUSINESS_OPEN_MIN, businessHours.getOpenMin());
-    	businessValues.put(Constants.BUSINESS_CLOSE_HR, businessHours.getCloseHr());
-    	businessValues.put(Constants.BUSINESS_CLOSE_MIN, businessHours.getCloseMin());
-		return businessValues;
+
+    private ContentValues constructBusinessHours(long id,
+            final MerchantBusinessHours businessHours) {
+        ContentValues businessValues = new ContentValues();
+        businessValues.put(Constants.MERCHANT_ID, id);
+        businessValues.put(Constants.BUSINESS_DAY, businessHours.getDay());
+        businessValues.put(Constants.BUSINESS_OPEN_HR, businessHours.getOpenHr());
+        businessValues.put(Constants.BUSINESS_OPEN_MIN, businessHours.getOpenMin());
+        businessValues.put(Constants.BUSINESS_CLOSE_HR, businessHours.getCloseHr());
+        businessValues.put(Constants.BUSINESS_CLOSE_MIN, businessHours.getCloseMin());
+        return businessValues;
     }
+
+    public Merchant getMerchant(long id) {
+        Merchant merchant = null;
+        Cursor cursor = null;
+        try {
+            cursor = getCursor(Constants.MERCHANTS_TABLE, null, "_id=" + id, null, null,
+                    null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                merchant = Merchant.getMerchantFromCursor(cursor);
+            }
+        } finally {
+            CursorUtils.safeClose(cursor);
+        }
+
+        return merchant;
+    }
+
     public List<Merchant> getAllMerchants(Category category) {
         List<Merchant> merchants = new ArrayList<Merchant>();
         Cursor cursor = null;
@@ -151,22 +181,22 @@ public class SQLiteStoreHandler {
         }
         return merchants;
     }
-    public MERCHANT_STATUS getBusinessHour(Merchant merchant){
-    	Calendar c=Calendar.getInstance(TimeZone.getTimeZone("GMT"+merchant.getTimezone()));	
-		int day=c.get(Calendar.DAY_OF_WEEK)-1;
-		
-		
-		String day_week=days[day];
-    	MerchantBusinessHours businessHours=new MerchantBusinessHours();
-    	String selection = "merchant_id = "+merchant.getId()+ " and day='"+day_week+"'";
-    	Log.i("statuscheck",c.get(Calendar.HOUR_OF_DAY)+"");
-    	Log.i("statuscheck",c.get(Calendar.MINUTE)+"");
-    	
-    	Cursor cursor = null;
-    	try {
-            cursor = getCursor(Constants.BUSINESS_TIMINGS_TABLE, null, selection, null, null,
-                    null, null);
-            
+
+    public MERCHANT_STATUS getBusinessHour(Merchant merchant) {
+        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"
+                + merchant.getTimezone()));
+        int day = c.get(Calendar.DAY_OF_WEEK) - 1;
+
+        String day_week = days[day];
+        MerchantBusinessHours businessHours = new MerchantBusinessHours();
+        String selection = "merchant_id = " + merchant.getId() + " and day='" + day_week
+                + "'";
+
+        Cursor cursor = null;
+        try {
+            cursor = getCursor(Constants.BUSINESS_TIMINGS_TABLE, null, selection, null,
+                    null, null, null);
+
             if (cursor != null && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     businessHours = MerchantBusinessHours.getFromCursor(cursor);
@@ -176,17 +206,23 @@ public class SQLiteStoreHandler {
         } finally {
             CursorUtils.safeClose(cursor);
         }
-    	
-    	if(((businessHours.getOpenHr()==c.get(Calendar.HOUR_OF_DAY))&&(businessHours.getOpenMin()<=(c.get(Calendar.MINUTE))))||((businessHours.getOpenHr()<=c.get(Calendar.HOUR_OF_DAY))))
-    		if(((businessHours.getCloseHr()==c.get(Calendar.HOUR_OF_DAY))&&(businessHours.getCloseMin()>=(c.get(Calendar.MINUTE))))||(businessHours.getCloseHr()>c.get(Calendar.HOUR_OF_DAY))){
-    			
-    			if(((businessHours.getCloseHr()==(c.get(Calendar.HOUR_OF_DAY)+1))&&(businessHours.getCloseMin()<=(c.get(Calendar.MINUTE))))||(businessHours.getCloseHr()<(c.get(Calendar.HOUR_OF_DAY))+1))
-    				return OSMLoader.MERCHANT_STATUS.ABOUT_TO_CLOSE;
-    			else
-    				return OSMLoader.MERCHANT_STATUS.OPEN;
-    		}
-    	return OSMLoader.MERCHANT_STATUS.CLOSED;
-    	
+
+        if (((businessHours.getOpenHr() == c.get(Calendar.HOUR_OF_DAY)) && (businessHours
+                .getOpenMin() <= (c.get(Calendar.MINUTE))))
+                || ((businessHours.getOpenHr() <= c.get(Calendar.HOUR_OF_DAY))))
+            if (((businessHours.getCloseHr() == c.get(Calendar.HOUR_OF_DAY)) && (businessHours
+                    .getCloseMin() >= (c.get(Calendar.MINUTE))))
+                    || (businessHours.getCloseHr() > c.get(Calendar.HOUR_OF_DAY))) {
+
+                if (((businessHours.getCloseHr() == (c.get(Calendar.HOUR_OF_DAY) + 1)) && (businessHours
+                        .getCloseMin() <= (c.get(Calendar.MINUTE))))
+                        || (businessHours.getCloseHr() < (c.get(Calendar.HOUR_OF_DAY)) + 1))
+                    return OSMLoader.MERCHANT_STATUS.ABOUT_TO_CLOSE;
+                else
+                    return OSMLoader.MERCHANT_STATUS.OPEN;
+            }
+        return OSMLoader.MERCHANT_STATUS.CLOSED;
+
     }
 
     /**
