@@ -247,11 +247,11 @@ public class OSMLoader extends Activity implements LocationListener {
             location.setLongitude(merchant.getLongitude());
     		
             if (currentLocation.distanceTo(location) <= (ONE_MILE * localRadius)) {
-            	int check=sqlite.getBusinessHour(merchant);
+            	MERCHANT_STATUS check=sqlite.getBusinessHour(merchant);
             	Log.i("dbcheck",check+"");
-            	if(check==1)
+            	if(check==MERCHANT_STATUS.ABOUT_TO_CLOSE)
             		item.setMarker(closingMarker);
-            	else if (check ==0) // Closed
+            	else if (check ==MERCHANT_STATUS.CLOSED) // Closed
             		continue;
                 overlayItemArray.add(item);
                 listView.append(++i + ". " + merchant.getName() + "\n" + description

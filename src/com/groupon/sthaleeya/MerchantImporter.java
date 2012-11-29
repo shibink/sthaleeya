@@ -30,7 +30,7 @@ public class MerchantImporter {
             while ((line = bis.readLine()) != null) {
                 String parts[] = line.split("\t");
                // Log.i("parts length",parts.length+"");
-                if (parts.length < 30) {
+                if (parts.length < 31) {
                     continue;
                 }
                 try {
@@ -41,6 +41,8 @@ public class MerchantImporter {
                     String[] days={"sun","mon","tue","wed","thu","fri","sat"};
                     for(int i=0;i<7;i++){
                     	MerchantBusinessHours businessHours;
+                    	parts[8+i]=parts[8+i].trim();
+                    	parts[9+i]=parts[9+i].trim();
                     	if(parts[8+i].equals("24 H")||(parts[8+i].equals("in")))
                     		businessHours=new MerchantBusinessHours(days[i],"0","24");
                     	else	
