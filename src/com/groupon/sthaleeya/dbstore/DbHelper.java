@@ -27,7 +27,7 @@ public class DbHelper extends SQLiteOpenHelper {
             + " (_id integer primary key autoincrement, name text not null, address text not null, zip_code text,"
             + "phone_no text, rating double default 0, timezone varchar(10) default null,"
             + "latitude double default 0, longitude double default 0, category text default 'ALL',"
-            + " UNIQUE(name,address) ON CONFLICT IGNORE);";
+            + " UNIQUE(name,latitude, longitude) ON CONFLICT IGNORE);";
 
     public static final String CREATE_BUSINESS_TIMINGS_TABLE = "create table "
             + Constants.BUSINESS_TIMINGS_TABLE
