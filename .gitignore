@@ -1,1 +1,8 @@
 bin/
+gen/
+
+*.apk
+*.dex
+*.class
+
+local.properties

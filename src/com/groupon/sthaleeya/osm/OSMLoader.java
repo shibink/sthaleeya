@@ -22,6 +22,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -47,14 +48,21 @@ public class OSMLoader extends Activity implements LocationListener {
     private static final double DEF_LATITUDE = 13.0878;
     private static final double DEF_LONGITUDE = 80.2785;
     private static final float ONE_MILE = 1609.34f; // 1 mile = 1609.34 meter
+    private static final int ONE_MINUTE = 60 * 1000;
     private static final int REQ_SETTINGS = 0;
-    public static enum MERCHANT_STATUS  {CLOSED,ABOUT_TO_CLOSE,OPEN};
+
+    public static enum MERCHANT_STATUS {
+        CLOSED, ABOUT_TO_CLOSE, OPEN
+    };
+
     private Category category = Category.ALL;
     private int localRadius = 20; // 20 miles
+    private long refreshRate = 30 * ONE_MINUTE; // 30 minutes
     private Location defaultLocation;
     private LocationManager locMgr;
     private MapView mapView;
     private MapController mapController;
+    private Handler handler;
     private Spinner category_selector;
     private ArrayList<OverlayItem> overlayItemArray = new ArrayList<OverlayItem>();
 
@@ -65,6 +73,7 @@ public class OSMLoader extends Activity implements LocationListener {
         Log.d(TAG, "OSM loader activity created");
         setContentView(R.layout.activity_osmloader);
 
+        handler = new Handler();
         defaultLocation = new Location(LocationManager.GPS_PROVIDER);
         defaultLocation.setLatitude(DEF_LATITUDE);
         defaultLocation.setLongitude(DEF_LONGITUDE);
@@ -82,12 +91,14 @@ public class OSMLoader extends Activity implements LocationListener {
         } else {
             mapController.setZoom(LocationUtil.DEFAULT_ZOOM);
         }
+        if (extras != null && extras.containsKey(Constants.KEY_REFRESH_RATE)) {
+            refreshRate = extras.getInt(Constants.KEY_REFRESH_RATE) * ONE_MINUTE;
+        }
         if (extras != null && extras.containsKey(Constants.IS_MAP_VIEW)) {
             displayView(extras.getBoolean(Constants.IS_MAP_VIEW));
         }
         locMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        addMerchantsToDisplay();
-        displayLocation();
+        refreshMap();
         mapView.invalidate();
 
         ImageView imgView = (ImageView) findViewById(R.id.settings_img);
@@ -136,8 +147,7 @@ public class OSMLoader extends Activity implements LocationListener {
         Category localCategory = Category.valueOf(Category.class, categoryStr);
         if (localCategory != category) {
             category = localCategory;
-            addMerchantsToDisplay();
-            displayLocation();
+            refreshMap();
         }
         Log.d(TAG, "Categry changed to " + category);
     }
@@ -156,8 +166,19 @@ public class OSMLoader extends Activity implements LocationListener {
 
     private void updateRadiusInMap() {
         mapController.setZoom(LocationUtil.getZoomLevel(localRadius));
+        // addMerchantsToDisplay();
+        displayLocation(locMgr.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+    }
+
+    private void refreshMap() {
+        refreshMap(locMgr.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+    }
+
+    private void refreshMap(Location loc) {
         addMerchantsToDisplay();
-        displayLocation();
+        displayLocation(loc);
+        handler.removeCallbacks(refreshMapRunnable);
+        handler.postDelayed(refreshMapRunnable, refreshRate);
     }
 
     @Override
@@ -175,6 +196,14 @@ public class OSMLoader extends Activity implements LocationListener {
                         updateRadiusInMap();
                     }
                 }
+                if (extras != null && extras.containsKey(Constants.KEY_REFRESH_RATE)) {
+                    long rate = extras.getInt(Constants.KEY_REFRESH_RATE) * ONE_MINUTE;
+                    if (rate != refreshRate) {
+                        refreshRate = rate;
+                        handler.removeCallbacks(refreshMapRunnable);
+                        handler.postDelayed(refreshMapRunnable, refreshRate);
+                    }
+                }
             }
             break;
         }
@@ -184,7 +213,8 @@ public class OSMLoader extends Activity implements LocationListener {
     protected void onStart() {
         super.onStart();
 
-        locMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 1, this);
+        locMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, (ONE_MILE / 2),
+                this);
     }
 
     @Override
@@ -215,6 +245,20 @@ public class OSMLoader extends Activity implements LocationListener {
         Log.d(TAG, "GPS Provider Disabled : " + arg0);
     }
 
+    // Runnable to refresh map
+    private Runnable refreshMapRunnable = new Runnable() {
+        @Override
+        public void run() {
+            // Refresh Map
+            refreshMap();
+        }
+    };
+
+    private String getDescription(Merchant merchant) {
+        return merchant.getAddress() + ", " + merchant.getZip() + "\nPhone: "
+                + merchant.getPhoneNumber();
+    }
+
     private void addMerchantsToDisplay() {
         SQLiteStoreHandler sqlite = new SQLiteStoreHandler();
         List<Merchant> merchants = sqlite.getAllMerchants(category);
@@ -237,8 +281,7 @@ public class OSMLoader extends Activity implements LocationListener {
         Drawable defaultMarker = getResources().getDrawable(R.drawable.purple);
         int i = 0;
         for (Merchant merchant : merchants) {
-            String description = merchant.getAddress() + ", " + merchant.getZip()
-                    + "\nPhone: " + merchant.getPhoneNumber();
+            String description = String.valueOf(merchant.getId());
             item = new OverlayItem(merchant.getName(), description, new GeoPoint(
                     merchant.getLatitude(), merchant.getLongitude()));
 
@@ -286,8 +329,13 @@ public class OSMLoader extends Activity implements LocationListener {
             if (item.mTitle != null) {
                 extras.putString(Constants.KEY_NAME, item.mTitle);
             }
-            if (item.mDescription != null) {
-                extras.putString(Constants.KEY_DETAILS, item.mDescription);
+            if (item.mDescription != null && !item.mDescription.isEmpty()) {
+                SQLiteStoreHandler sqlite = new SQLiteStoreHandler();
+
+                Merchant merchant = sqlite.getMerchant(Long.parseLong(item.mDescription));
+                extras.putString(Constants.KEY_DETAILS, getDescription(merchant));
+            } else {
+                extras.putString(Constants.KEY_DETAILS, "");
             }
             showDialog(DIALOG_SHOW_DETAILS, extras);
             return true;
@@ -295,19 +343,11 @@ public class OSMLoader extends Activity implements LocationListener {
 
     };
 
-    private void displayLocation() {
-        displayLocation(locMgr.getLastKnownLocation(LocationManager.GPS_PROVIDER));
-    }
-
     private void displayLocation(Location loc) {
         if (loc == null) {
             loc = defaultLocation;
         }
 
-        double latitude = loc.getLatitude();
-        double longitude = loc.getLongitude();
-
-        Log.d(TAG, "Location : " + latitude + "," + longitude);
         mapController.setCenter(new GeoPoint(loc));
         mapView.invalidate();
     }

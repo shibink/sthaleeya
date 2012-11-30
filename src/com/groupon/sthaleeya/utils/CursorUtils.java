@@ -99,7 +99,6 @@ public class CursorUtils {
         try {
             if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
-                    Log.d(TAG, "Cursor closed");
             }
         } catch (RuntimeException e) {
             Log.w(TAG, "Ignoring exception on cursor close", e);

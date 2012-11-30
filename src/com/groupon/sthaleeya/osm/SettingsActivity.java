@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.groupon.sthaleeya.Constants;
@@ -31,12 +33,18 @@ public class SettingsActivity extends Activity {
 
         setContentView(R.layout.settings_activity);
 
+        final EditText edit = (EditText) findViewById(R.id.refresh_rate_value);
         Button button1 = (Button) findViewById(R.id.save_settings);
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String refreshRate = edit.getText().toString();
                 Intent intent = new Intent();
                 intent.putExtra(Constants.KEY_RADIUS, localRadius);
+                if (refreshRate != null && !refreshRate.isEmpty()) {
+                    intent.putExtra(Constants.KEY_REFRESH_RATE,
+                            Integer.parseInt(refreshRate));
+                }
                 setResult(RESULT_OK, intent);
                 SettingsActivity.this.finish();
             }
@@ -62,11 +70,14 @@ public class SettingsActivity extends Activity {
         uploadMerchants.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            	List<Merchant> merchants=MerchantImporter.importMerchants(SettingsActivity.this);
-                 SQLiteStoreHandler sqlite = new SQLiteStoreHandler();
-                 sqlite.insertMerchants(merchants);
+                List<Merchant> merchants = MerchantImporter
+                        .importMerchants(SettingsActivity.this);
+                SQLiteStoreHandler sqlite = new SQLiteStoreHandler();
+                sqlite.insertMerchants(merchants);
             }
         });
+
+        LinearLayout refreshLayout = (LinearLayout) findViewById(R.id.refresh_layout);
 
         String action = getIntent().getAction();
         if (Constants.ACTION_SETTINGS.equals(action)) {
@@ -78,6 +89,7 @@ public class SettingsActivity extends Activity {
                 localRadius = extras.getInt(Constants.KEY_RADIUS);
             }
         } else {
+            refreshLayout.setVisibility(View.GONE);
             button1.setVisibility(View.GONE);
         }
 
