@@ -40,7 +40,7 @@ public static final String CREATE_BUSINESS_TIMINGS_TABLE="create table "
     	+ Constants.BUSINESS_TIMINGS_TABLE	;	
 
     private DbHelper(Context context) {
-        super(context, Constants.OSM_DATABASE_NAME, null, Constants.OSM_DATABASE_VERSION);
+        super(context, Constants.DATABASE_NAME, null, Constants.OSM_DATABASE_VERSION);
     }
 
     public static DbHelper getInstance() {

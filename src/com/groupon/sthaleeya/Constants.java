@@ -14,6 +14,7 @@ public class Constants {
     /**
      * name
      */
+    public static final String CATEGORY = "category";
     public static final String _ID = "_id";
     public static final String MERCHANT_NAME = "name";
     public static final String BUSINESS_MERCHANT_ID = "merchant_id";
@@ -47,13 +48,9 @@ public class Constants {
     /**
      * Database Name
      */
-    public static final String OSM_DATABASE_NAME = "osm_db";
-
-    /**
-     * Database Version
-     */
-    public static final int OSM_DATABASE_VERSION = 19;
-
+    public static final String DATABASE_NAME = "osm_db";
+    
+    public static final int  OSM_DATABASE_VERSION =20;
     /**
      * DB table
      */

@@ -22,6 +22,10 @@ public class MerchantBusinessHours {
     	this.setOpenTime(openTime);
     	this.setCloseTime(closedTime);
     }
+    public MerchantBusinessHours(String day,int openHr, int openMin, int closeHr, int closeMin) {
+    	this.setDay(day);
+    
+    }
 	public void setDay(String day){
 		this.day=day;
 	}
@@ -52,6 +56,18 @@ public class MerchantBusinessHours {
 	}
 	public int getOpenHr(){
 		return this.openHr;
+	}
+	public void setOpenHr(int openhr){
+		this.openHr=openhr;
+	}
+	public void setCloseHr(int closehr){
+		this.closeHr=closehr;
+	}
+	public void setOpenMin(int openmin){
+		this.openMin=openmin;
+	}
+	public void setCloseMin(int closemin){
+		this.closeMin=closemin;
 	}
 	public int getOpenMin(){
 		return this.openMin;
