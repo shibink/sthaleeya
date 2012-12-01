@@ -72,8 +72,6 @@ public class SQLiteStoreHandler {
 
     public long insertMerchants(final List<Merchant> merchants) {
         long rowId = -1;
-        Merchant currentMerchant = null;
-        long currentId = -1;
         SQLiteDatabase db = DbHelper.getInstance().getWritableDatabase();
 
         if (db == null) {
@@ -85,8 +83,6 @@ public class SQLiteStoreHandler {
             for (Merchant merchant : merchants) {
                 ContentValues initialValues = constructMerchantInfo(merchant);
                 rowId = db.insertOrThrow(Constants.MERCHANTS_TABLE, null, initialValues);
-                currentMerchant = merchant;
-                currentId = rowId;
                 if (rowId < 0) {
                     continue;
                 }
@@ -99,12 +95,7 @@ public class SQLiteStoreHandler {
                 }
             }
         } catch (SQLException exception) {
-            if (currentMerchant != null) {
-            Log.e(TAG, "Exception : " + exception.getMessage() + " Name: "+currentMerchant.getName()
-                    + " Address" + currentMerchant.getAddress() + ", ID : " + currentMerchant.getId());
-            } else {
-                Log.e(TAG, "Exception", exception);
-            }
+            Log.e(TAG, "Exception", exception);
         } finally {
             db.setTransactionSuccessful();
             db.endTransaction();

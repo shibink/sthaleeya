@@ -289,13 +289,14 @@ public class OSMLoader extends Activity implements LocationListener {
             location.setLatitude(merchant.getLatitude());
             location.setLongitude(merchant.getLongitude());
 
-            MERCHANT_STATUS check = sqlite.getBusinessHour(merchant);
-            if (check == MERCHANT_STATUS.ABOUT_TO_CLOSE)
-                item.setMarker(closingMarker);
-            else if (check == MERCHANT_STATUS.CLOSED) // Closed
-                continue;
-            overlayItemArray.add(item);
             if (currentLocation.distanceTo(location) <= (ONE_MILE * localRadius)) {
+                MERCHANT_STATUS check = sqlite.getBusinessHour(merchant);
+                if (check == MERCHANT_STATUS.ABOUT_TO_CLOSE)
+                    item.setMarker(closingMarker);
+                else if (check == MERCHANT_STATUS.CLOSED) // Closed
+                    continue;
+                overlayItemArray.add(item);
+
                 listView.append(++i + ". " + merchant.getName() + "\n"
                         + getDescription(merchant) + "\n\n");
             }
