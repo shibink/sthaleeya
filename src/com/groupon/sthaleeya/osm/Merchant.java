@@ -136,7 +136,7 @@ public class Merchant {
     }
 
     /**
-     * To get ad unit from cursor
+     * To get merchant from cursor
      * 
      * @param cursor
      * @return
@@ -148,7 +148,7 @@ public class Merchant {
 
         Merchant merchant = new Merchant();
 
-        // populate ads table data
+        // populate merchant table data
         merchant.id = CursorUtils.getLongFromCursor(Constants._ID, cursor);
         merchant.name = CursorUtils.getStringFromCursor(Constants.MERCHANT_NAME, cursor);
         merchant.address = CursorUtils.getStringFromCursor(Constants.MERCHANT_ADDRESS,

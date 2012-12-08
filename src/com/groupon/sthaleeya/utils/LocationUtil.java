@@ -21,7 +21,7 @@ import android.util.Log;
 public class LocationUtil {
     // Should be same as radius_values.xml
     private static int[] radiusValues = {1,2,5,10,15,20,30,40,50};
-    private static int[] zoomLevels = {15,14,12,11,10,10,9,9,8};
+    private static int[] zoomLevels = {15,14,12,10,9,9,9,9,8};
     public static final int DEFAULT_ZOOM = 8;
 
     public static Location getLocation(String address) {

@@ -20,7 +20,6 @@ import com.groupon.sthaleeya.osm.OSMLoader.MERCHANT_STATUS;
 import com.groupon.sthaleeya.utils.CursorUtils;
 
 public class SQLiteStoreHandler {
-    private static final String SQL_OR_OPERATOR = " OR ";
     private static final String TAG = "SQLiteStoreHandler";
     private static final String[] days = { "sun", "mon", "tue", "wed", "thu", "fri",
             "sat" };
@@ -28,52 +27,8 @@ public class SQLiteStoreHandler {
     public SQLiteStoreHandler() {
     }
 
-    public long deleteMerchants(String[] names) {
-        if ((names == null) || (names.length <= 0)) {
-            return -1;
-        }
-
-        String selection = "";
-        for (String name : names) {
-            selection += Constants.MERCHANT_NAME + "= '" + name + "'" + SQL_OR_OPERATOR;
-        }
-        selection = selection.substring(0, selection.length() - SQL_OR_OPERATOR.length());
-
-        return deleteMerchantsWhere(selection);
-    }
-
-    /**
-     * @return number of rows affected
-     */
-    private long deleteMerchantsWhere(String where) {
-        int ret = -1;
-        SQLiteDatabase db = DbHelper.getInstance().getWritableDatabase();
-
-        if (db == null) {
-            return ret;
-        }
-
-        db.beginTransaction();
-        try {
-            ret = db.delete(Constants.MERCHANTS_TABLE, where, null);
-            if (ret >= 0) {
-                db.setTransactionSuccessful();
-            }
-        } finally {
-            db.endTransaction();
-        }
-        return ret;
-    }
-
-    public long deleteMerchant(String name) {
-        String whereClause = Constants.MERCHANT_NAME + "= '" + name + "'";
-        return deleteMerchantsWhere(whereClause);
-    }
-
     public long insertMerchants(final List<Merchant> merchants) {
         long rowId = -1;
-        Merchant currentMerchant = null;
-        long currentId = -1;
         SQLiteDatabase db = DbHelper.getInstance().getWritableDatabase();
 
         if (db == null) {
@@ -85,8 +40,6 @@ public class SQLiteStoreHandler {
             for (Merchant merchant : merchants) {
                 ContentValues initialValues = constructMerchantInfo(merchant);
                 rowId = db.insertOrThrow(Constants.MERCHANTS_TABLE, null, initialValues);
-                currentMerchant = merchant;
-                currentId = rowId;
                 if (rowId < 0) {
                     continue;
                 }
@@ -99,12 +52,7 @@ public class SQLiteStoreHandler {
                 }
             }
         } catch (SQLException exception) {
-            if (currentMerchant != null) {
-            Log.e(TAG, "Exception : " + exception.getMessage() + " Name: "+currentMerchant.getName()
-                    + " Address" + currentMerchant.getAddress() + ", ID : " + currentMerchant.getId());
-            } else {
-                Log.e(TAG, "Exception", exception);
-            }
+            Log.e(TAG, "Exception", exception);
         } finally {
             db.setTransactionSuccessful();
             db.endTransaction();
@@ -128,7 +76,6 @@ public class SQLiteStoreHandler {
         initialValues.put(Constants.MERCHANT_RATING, merchant.getRating());
         initialValues.put(Constants.PHONE_NUM, merchant.getPhoneNumber());
         initialValues.put(Constants.TIMEZONE, merchant.getTimezone());
-        /* fill here */
         return initialValues;
     }
 
