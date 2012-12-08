@@ -1,5 +1,6 @@
 package com.groupon.sthaleeya.osm;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -17,7 +18,8 @@ import android.widget.Spinner;
 import com.groupon.sthaleeya.Constants;
 import com.groupon.sthaleeya.MerchantImporter;
 import com.groupon.sthaleeya.R;
-import com.groupon.sthaleeya.dbstore.SQLiteStoreHandler;
+import com.groupon.sthaleeya.dbstore.JDBCConnection;
+
 import com.groupon.sthaleeya.utils.LocationUtil;
 
 public class SettingsActivity extends Activity {
@@ -72,8 +74,8 @@ public class SettingsActivity extends Activity {
             public void onClick(View v) {
                 List<Merchant> merchants = MerchantImporter
                         .importMerchants(SettingsActivity.this);
-                SQLiteStoreHandler sqlite = new SQLiteStoreHandler();
-                sqlite.insertMerchants(merchants);
+                JDBCConnection jdbc=JDBCConnection.getInstance();
+                jdbc.populate((ArrayList<Merchant>)merchants);
             }
         });
 

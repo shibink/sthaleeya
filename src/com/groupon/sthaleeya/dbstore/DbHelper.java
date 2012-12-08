@@ -50,6 +50,8 @@ public class DbHelper extends SQLiteOpenHelper {
     public static DbHelper getInstance() {
         if (instance == null) {
             instance = new DbHelper(OsmApplication.getAppContext());
+            Log.i("start","In OSMLoader start function");
+            JDBCConnection.getInstance();
         }
         return instance;
     }

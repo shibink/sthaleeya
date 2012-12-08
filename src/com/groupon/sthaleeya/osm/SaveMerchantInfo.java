@@ -40,6 +40,6 @@ public class SaveMerchantInfo extends Activity {
         merchant.setRating(Double.parseDouble(editText.getText().toString()));
         
 
-        new InsertMerchantTask().execute(new Merchant[] { merchant });
+        //new InsertMerchantTask().execute(new Merchant[] { merchant });
     }
 }

@@ -52,7 +52,7 @@ public class MerchantImporter {
                     merchant.setBusinessHours(merchantbusinesshours);
                     merchants.add(merchant);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    ex.getMessage();
                 }
             }
         } catch (IOException e) {
@@ -61,4 +61,5 @@ public class MerchantImporter {
 
         return merchants;
     }
+    
 }

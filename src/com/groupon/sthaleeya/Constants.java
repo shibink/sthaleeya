@@ -49,12 +49,12 @@ public class Constants {
      * Database Name
      */
     public static final String OSM_DATABASE_NAME = "osm_db";
-    public static final String DATABASE_NAME = "osm_db";
+    public static final String DATABASE_NAME = "test";
 
     /**
      * Database Version
      */
-    public static final int OSM_DATABASE_VERSION = 21;
+    public static final int OSM_DATABASE_VERSION = 27;
 
 
     /**
