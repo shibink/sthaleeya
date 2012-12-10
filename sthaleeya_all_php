@@ -1,0 +1,51 @@
+<?php
+  if(key_exists('category',$_REQUEST))
+        $category=$_REQUEST['category'];
+  else
+        $category='ALL';
+  if(key_exists('type',$_REQUEST))
+        $type=$_REQUEST['type'];
+  else
+        $type=1;
+
+  $info=null;
+  $data=null;
+  mysql_connect("localhost","sthaleeya","") or die ("cannot connect to mysql server".mysql_error());
+        mysql_select_db("test") or die ("selecting database problem".mysql_error());
+ if($type==1){
+   $query="select a.*,b.day,b.openHr,b.openMin,b.closeHr,b.closeMin from merchants_table a inner join business_timings b on a._id=b.merchant_id where category='".$category."' and dayofweek(convert_tz(utc_timestamp(),'+00:00',concat(substr(timezone,1,1),concat(substr(timezone,2,2),':',substr(timezone,4,2))))) = b.day";
+  //echo $query;
+  $data=mysql_query($query) or die(mysql_error());
+}
+else if($type==2){
+  $id=0;
+  if(key_exists('id',$_REQUEST))
+      $id=$_REQUEST['id'];
+  else
+    die("ID not given");
+  $query="select a.*,b.day,b.openHr,b.openMin,b.closeHr,b.closeMin from merchants_table a inner join business_timings b on a._id=b.merchant_id where a._id=".$id." and dayofweek(convert_tz(utc_timestamp(),'+00:00',concat(substr(timezone,1,1),concat(substr(timezone,2,2),':',substr(timezone,4,2))))) = b.day";
+   //echo $query;
+   $data=mysql_query($query) or die(mysql_error());
+}
+$result=array();
+  while($info=mysql_fetch_array($data)){
+    $temp=array();
+    $temp['_id']=$info['_id'];
+    $temp['name']=$info['name'];
+    $temp['openHr']=$info['openHr'];
+    $temp['openMin']=$info['openMin'];
+    $temp['closeHr']=$info['closeHr'];
+    $temp['closeMin']=$info['closeMin'];
+$temp['address']=$info['address'];
+    $temp['zip_code']=$info['zip_code'];
+    $temp['phone_no']=$info['phone_no'];
+    $temp['rating']=$info['rating'];
+    $temp['timezone']=$info['timezone'];
+    $temp['latitude']=$info['latitude'];
+    $temp['longitude']=$info['longitude'];
+    $temp['day']=$info['day'];
+    array_push($result,$temp);
+  }
+  echo json_encode($result);
+?>
+                               

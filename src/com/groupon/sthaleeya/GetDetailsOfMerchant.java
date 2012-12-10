@@ -25,7 +25,7 @@ public class GetDetailsOfMerchant extends AsyncTask<Object, Void, Object[]> {
 
     @Override
     protected Object[] doInBackground(Object... params) {
-
+        
         Long id = (Long) params[1];
         Merchant newMerchant = null;
         StringBuilder stringBuilder = null;
