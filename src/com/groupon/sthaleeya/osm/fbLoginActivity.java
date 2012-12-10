@@ -12,6 +12,7 @@ import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 
 public class fbLoginActivity extends FacebookActivity {
+    private String TAG="fbLoginActivity";
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +51,7 @@ public class fbLoginActivity extends FacebookActivity {
                     new Request.GraphUserCallback() {
                         @Override
                         public void onCompleted(GraphUser user, Response response) {
-                            Log.i("fb", "in user" + response.toString());
+                            Log.i(TAG, "in user" + response.toString());
                             if (user != null) {
                                 intent.putExtra("userName", user.getName());
                             }

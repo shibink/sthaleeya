@@ -37,6 +37,7 @@ import com.facebook.widget.PickerFragment;
 // Activity creating a fragment (in this case a PlacePickerFragment) via XML layout rather than
 // programmatically.
 public class PickFriendsActivity extends FragmentActivity {
+    private String TAG="PickFriendsActivity";
     FriendPickerFragment friendPickerFragment;
 
     // A helper to simplify life for callers who want to populate a Bundle with the necessary
@@ -79,10 +80,10 @@ public class PickFriendsActivity extends FragmentActivity {
         friendPickerFragment.setOnDoneButtonClickedListener(new PickerFragment.OnDoneButtonClickedListener() {
             @Override
             public void onDoneButtonClicked(PickerFragment<?> fragment) {
-            	Log.i("fb",friendPickerFragment.getSelection().size()+"");
+            	Log.i(TAG,friendPickerFragment.getSelection().size()+"");
             	List<GraphUser> friends=friendPickerFragment.getSelection();
             	for(GraphUser friend:friends){
-            		Log.i("fb",friend.getName());
+            		Log.i(TAG,friend.getName());
             	}
                 setResult(RESULT_OK, null);
                 finish();

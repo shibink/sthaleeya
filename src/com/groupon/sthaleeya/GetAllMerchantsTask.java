@@ -21,6 +21,7 @@ import com.groupon.sthaleeya.osm.MerchantBusinessHours;
 import com.groupon.sthaleeya.osm.OSMLoader;
 
 public class GetAllMerchantsTask extends AsyncTask<Void, Void, List<Merchant>> {
+    private static final String TAG="GetAllMerchants";
 
     @Override
     protected List<Merchant> doInBackground(Void... a) {
@@ -67,10 +68,10 @@ public class GetAllMerchantsTask extends AsyncTask<Void, Void, List<Merchant>> {
                     merchants.add(newMerchant);
                 }
             } catch (JSONException e) {
-                Log.e("start", "Error parsing data " + e.toString());
+                Log.e(TAG, "Error parsing data " + e.toString());
             }
         } catch (Exception e) {
-            Log.i("start", e.getMessage());
+            Log.i(TAG, e.getMessage());
         }
 
         return merchants;

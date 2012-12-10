@@ -50,7 +50,6 @@ import com.groupon.sthaleeya.utils.LocationUtil;
 public class OSMLoader extends FragmentActivity implements LocationListener {
     private final int PICK_FRIENDS_ACTIVITY = 1;
     private static final int DIALOG_SHOW_DETAILS = 1;
-    private FbFragment fbFragment;
     private static final String TAG = "OSMLoader";
     private static final double DEF_LATITUDE = 13.0878;
     private static final double DEF_LONGITUDE = 80.2785;
@@ -141,9 +140,6 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
                 intent.setComponent(new ComponentName("com.groupon.sthaleeya",
                         "com.groupon.sthaleeya.osm.fbLoginActivity"));
                 startActivityForResult(intent, REQ_SETTINGS);
-                // finish();
-                // call facebook activity
-                // get the result
             }
         });
         Button button4 = (Button) findViewById(R.id.pickFriendsButton);
@@ -153,13 +149,6 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName("com.groupon.sthaleeya",
                         "com.groupon.sthaleeya.osm.PickFriendsActivity"));
-                // Note: The following line is optional, as multi-select
-                // behavior is the default for
-                // FriendPickerFragment. It is here to demonstrate how
-                // parameters could be passed to the
-                // friend picker if single-select functionality was desired, or
-                // if a different user ID was
-                // desired (for instance, to see friends of a friend).
                 PickFriendsActivity.populateParameters(intent, null, true, true);
                 startActivityForResult(intent, PICK_FRIENDS_ACTIVITY);
             }
@@ -249,13 +238,13 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
                     String user = extras.getString("userName");
                     TextView welcome = (TextView) findViewById(R.id.userName);
                     welcome.setText("Hello " + user + "!");
-                    Log.i("fb", welcome.getText() + "");
+                    Log.i(TAG, welcome.getText() + "");
                 }
                 if (extras != null && extras.containsKey("friends_names")) {
                     ArrayList<String> friends_names = extras
                             .getStringArrayList("friends_names");
                     for (String friend : friends_names)
-                        Log.i("fb", friend);
+                        Log.i(TAG, friend);
                 }
             }
             break;
@@ -319,7 +308,6 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
     public MERCHANT_STATUS getBusinessHour(Merchant merchant) {
         Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"
                 + merchant.getTimezone()));
-        int day = c.get(Calendar.DAY_OF_WEEK) - 1;
         MerchantBusinessHours businessHours = merchant.getBusinessHours().get(0);
         if (((businessHours.getOpenHr() == c.get(Calendar.HOUR_OF_DAY)) && (businessHours
                 .getOpenMin() <= (c.get(Calendar.MINUTE))))
@@ -367,7 +355,7 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
 
             if (currentLocation.distanceTo(location) <= (ONE_MILE * localRadius)) {
                 MERCHANT_STATUS check = getBusinessHour(merchant);
-                Log.i("dbcheck", check + "");
+                Log.i(TAG, check + "");
                 /*
                  * if(check==MERCHANT_STATUS.ABOUT_TO_CLOSE)
                  * item.setMarker(closingMarker); else if (check
