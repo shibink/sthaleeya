@@ -7,11 +7,10 @@ import android.util.Log;
 import com.facebook.FacebookActivity;
 import com.facebook.Request;
 import com.facebook.Response;
-import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 
-public class fbLoginActivity extends FacebookActivity {
+public class FbLoginActivity extends FacebookActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,8 +31,7 @@ public class fbLoginActivity extends FacebookActivity {
     protected void onSessionStateChange(SessionState state, Exception exception) {
         if (state.isOpened()) {
             final Intent intent = new Intent();
-            final Session session = this.getSession();
-            /*
+            /* final Session session = this.getSession();
              * Request request = Request.newMyFriendsRequest( session, new
              * Request.GraphUserListCallback() {
              * 

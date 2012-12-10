@@ -21,17 +21,17 @@ import com.groupon.sthaleeya.osm.MerchantBusinessHours;
 import com.groupon.sthaleeya.osm.OSMLoader;
 
 public class GetDetailsOfMerchant extends AsyncTask<Object, Void, Object[]> {
+    private static final String TAG = "GetDetailsOfMerchant";
 
     @Override
     protected Object[] doInBackground(Object... params) {
 
         Long id = (Long) params[1];
-        Log.i("id", id + "");
         Merchant newMerchant = null;
         StringBuilder stringBuilder = null;
         try {
-            HttpPost httppost = new HttpPost("http://10.1.23.243/sthaleeya_all.php?id="
-                    + id + "&type=2");
+            HttpPost httppost = new HttpPost(Constants.SERVER_URL + "?id=" + id
+                    + "&type=2");
             HttpClient client = new DefaultHttpClient();
             HttpResponse response;
             stringBuilder = new StringBuilder();
@@ -43,7 +43,7 @@ public class GetDetailsOfMerchant extends AsyncTask<Object, Void, Object[]> {
             while ((b = stream.read()) != -1) {
                 stringBuilder.append((char) b);
             }
-            Log.i("start", stringBuilder.toString());
+            Log.i(TAG, stringBuilder.toString());
             // parse json data
             try {
                 JSONArray jArray = new JSONArray(stringBuilder.toString());
@@ -68,10 +68,10 @@ public class GetDetailsOfMerchant extends AsyncTask<Object, Void, Object[]> {
                 businessArray.add(businessHours);
                 newMerchant.setBusinessHours(businessArray);
             } catch (JSONException e) {
-                Log.e("start", "Error parsing data " + e.toString());
+                Log.e(TAG, "Error parsing data " + e.toString());
             }
         } catch (Exception e) {
-            Log.i("start", e.getMessage());
+            Log.i(TAG, e.getMessage());
         }
         Object[] returnObjects = new Object[2];
         returnObjects[0] = newMerchant;

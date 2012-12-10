@@ -50,7 +50,6 @@ import com.groupon.sthaleeya.utils.LocationUtil;
 public class OSMLoader extends FragmentActivity implements LocationListener {
     private final int PICK_FRIENDS_ACTIVITY = 1;
     private static final int DIALOG_SHOW_DETAILS = 1;
-    private FbFragment fbFragment;
     private static final String TAG = "OSMLoader";
     private static final double DEF_LATITUDE = 13.0878;
     private static final double DEF_LONGITUDE = 80.2785;
@@ -205,7 +204,7 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
 
     private void updateRadiusInMap() {
         mapController.setZoom(LocationUtil.getZoomLevel(localRadius));
-        // addMerchantsToDisplay();
+        addMerchantsToDisplay();
         displayLocation(locMgr.getLastKnownLocation(LocationManager.GPS_PROVIDER));
     }
 
@@ -249,13 +248,13 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
                     String user = extras.getString("userName");
                     TextView welcome = (TextView) findViewById(R.id.userName);
                     welcome.setText("Hello " + user + "!");
-                    Log.i("fb", welcome.getText() + "");
+                    Log.i(TAG, welcome.getText() + "");
                 }
                 if (extras != null && extras.containsKey("friends_names")) {
                     ArrayList<String> friends_names = extras
                             .getStringArrayList("friends_names");
                     for (String friend : friends_names)
-                        Log.i("fb", friend);
+                        Log.i(TAG, friend);
                 }
             }
             break;
@@ -312,25 +311,25 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
     }
 
     private void addMerchantsToDisplay() {
-
         new GetAllMerchantsTask().execute();
     }
 
     public MERCHANT_STATUS getBusinessHour(Merchant merchant) {
         Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"
                 + merchant.getTimezone()));
-        int day = c.get(Calendar.DAY_OF_WEEK) - 1;
+        int hourOfDay = c.get(Calendar.HOUR_OF_DAY);
+        int minutes = c.get(Calendar.MINUTE);
         MerchantBusinessHours businessHours = merchant.getBusinessHours().get(0);
-        if (((businessHours.getOpenHr() == c.get(Calendar.HOUR_OF_DAY)) && (businessHours
-                .getOpenMin() <= (c.get(Calendar.MINUTE))))
-                || ((businessHours.getOpenHr() <= c.get(Calendar.HOUR_OF_DAY))))
-            if (((businessHours.getCloseHr() == c.get(Calendar.HOUR_OF_DAY)) && (businessHours
-                    .getCloseMin() >= (c.get(Calendar.MINUTE))))
-                    || (businessHours.getCloseHr() > c.get(Calendar.HOUR_OF_DAY))) {
 
-                if (((businessHours.getCloseHr() == (c.get(Calendar.HOUR_OF_DAY) + 1)) && (businessHours
-                        .getCloseMin() <= (c.get(Calendar.MINUTE))))
-                        || (businessHours.getCloseHr() < (c.get(Calendar.HOUR_OF_DAY)) + 1))
+        if (((businessHours.getOpenHr() == hourOfDay) && (businessHours.getOpenMin() <= minutes))
+                || ((businessHours.getOpenHr() <= hourOfDay)))
+            if (((businessHours.getCloseHr() == hourOfDay) && (businessHours
+                    .getCloseMin() >= minutes))
+                    || (businessHours.getCloseHr() > hourOfDay)) {
+
+                if (((businessHours.getCloseHr() == (hourOfDay + 1)) && (businessHours
+                        .getCloseMin() <= minutes))
+                        || (businessHours.getCloseHr() < (hourOfDay) + 1))
                     return OSMLoader.MERCHANT_STATUS.ABOUT_TO_CLOSE;
                 else
                     return OSMLoader.MERCHANT_STATUS.OPEN;
@@ -367,12 +366,14 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
 
             if (currentLocation.distanceTo(location) <= (ONE_MILE * localRadius)) {
                 MERCHANT_STATUS check = getBusinessHour(merchant);
-                Log.i("dbcheck", check + "");
-                /*
-                 * if(check==MERCHANT_STATUS.ABOUT_TO_CLOSE)
-                 * item.setMarker(closingMarker); else if (check
-                 * ==MERCHANT_STATUS.CLOSED) // Closed continue;
-                 */
+
+                if (check == MERCHANT_STATUS.ABOUT_TO_CLOSE) {
+                    item.setMarker(closingMarker);
+                }
+                //else if (check == MERCHANT_STATUS.CLOSED) {
+                   // continue;
+                //}
+
                 overlayItemArray.add(item);
                 listView.append(++i + ". " + merchant.getName() + "\n" + description
                         + "\n\n");
@@ -400,7 +401,6 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
             return false;
         }
 
-        @SuppressWarnings("deprecation")
         @Override
         public boolean onItemSingleTapUp(int index, OverlayItem item) {
             Bundle extras = new Bundle();
@@ -414,11 +414,10 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
                         Long.parseLong(item.mDescription), extras);
             } else {
                 extras.putString(Constants.KEY_DETAILS, "");
+                showDialog(DIALOG_SHOW_DETAILS, extras);
             }
-            // showDialog(DIALOG_SHOW_DETAILS, extras);
             return true;
         }
-
     };
 
     public void showMerchantOnTap(Merchant merchant, Bundle extras) {
