@@ -138,7 +138,7 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName("com.groupon.sthaleeya",
-                        "com.groupon.sthaleeya.osm.fbLoginActivity"));
+                        "com.groupon.sthaleeya.osm.FbLoginActivity"));
                 startActivityForResult(intent, REQ_SETTINGS);
             }
         });

@@ -5,39 +5,26 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="108dp" >
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
 
         <com.facebook.widget.LoginButton
             android:id="@+id/authButton"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/userName"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
-            android:layout_weight="20" />
+            android:text="@string/userName" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="20"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/userName"
-                android:layout_width="221dp"
-                android:layout_height="38dp"
-                android:layout_weight="1.04"
-                android:text="@string/userName" />
-
-            <Button
-                android:id="@+id/pickFriendsButton"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="205dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.80"
-                android:text="@string/select" />
-
-        </LinearLayout>
-       
+        <Button
+            android:id="@+id/pickFriendsButton"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            style="?android:attr/buttonStyleSmall"
+            android:text="@string/select" />
     </LinearLayout>
 
     <LinearLayout
@@ -63,6 +50,7 @@
 
         <Button
             android:id="@+id/switch_view"
+            style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/list_merchants" />
@@ -81,14 +69,14 @@
 
         <EditText
             android:id="@+id/listView"
-            android:inputType="textMultiLine"
-            android:textColor="@android:color/primary_text_dark"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:background="@android:color/black"
+            android:inputType="textMultiLine"
             android:text="@string/empty_merchants"
+            android:textColor="@android:color/primary_text_dark"
             android:textIsSelectable="true"
-            android:visibility="gone" 
-            android:background="@android:color/black">
+            android:visibility="gone" >
         </EditText>
     </ScrollView>
 
