@@ -37,6 +37,11 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.facebook.FacebookActivity;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.SessionState;
+import com.facebook.model.GraphUser;
 import com.groupon.sthaleeya.Category;
 import com.groupon.sthaleeya.Constants;
 import com.groupon.sthaleeya.GetAllMerchantsTask;
@@ -47,7 +52,7 @@ import com.groupon.sthaleeya.utils.LocationUtil;
 /**
  * Class to load open street map
  */
-public class OSMLoader extends FragmentActivity implements LocationListener {
+public class OSMLoader extends FacebookActivity implements LocationListener {
     private final int PICK_FRIENDS_ACTIVITY = 1;
     private static final int DIALOG_SHOW_DETAILS = 1;
     private static final String TAG = "OSMLoader";
@@ -74,7 +79,7 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
     private ArrayList<OverlayItem> overlayItemArray = new ArrayList<OverlayItem>();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         OSMLoader.osmloader = this;
         Log.d(TAG, "OSM loader activity created");
@@ -136,10 +141,12 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName("com.groupon.sthaleeya",
-                        "com.groupon.sthaleeya.osm.FbLoginActivity"));
-                startActivityForResult(intent, REQ_SETTINGS);
+                SessionState state = OSMLoader.this.getSessionState();
+                if (state == null || state.isClosed()) {
+                    OSMLoader.this.openSession();
+                } else if (state.isOpened()) {
+                    OSMLoader.this.closeSessionAndClearTokenInformation();
+                }
             }
         });
         Button button4 = (Button) findViewById(R.id.pickFriendsButton);
@@ -153,8 +160,32 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
                 startActivityForResult(intent, PICK_FRIENDS_ACTIVITY);
             }
         });
+        getUser(this.getSessionState());
     }
-
+    private void getUser(SessionState state){
+        if (state!=null && state.isOpened()) {
+            Request request = Request.newMeRequest(this.getSession(),
+                    new Request.GraphUserCallback() {
+                        @Override
+                        public void onCompleted(GraphUser user, Response response) {
+                            if (user != null) {
+                                TextView welcome = (TextView) findViewById(R.id.userName);
+                                welcome.setText("Hello " + user.getName() + "!");
+                            }
+                        }
+                    });
+            Request.executeBatchAsync(request);
+        }
+        else{
+            TextView welcome = (TextView) findViewById(R.id.userName);
+            welcome.setText("Hello Guest!");
+        }
+            
+    }
+    @Override
+    protected void onSessionStateChange(SessionState state, Exception exception) {
+       getUser(state);
+    }
     private void displayView(boolean isMapView) {
         Button button = (Button) findViewById(R.id.switch_view);
         View mapView = findViewById(R.id.mapview);
@@ -210,7 +241,7 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
         case PICK_FRIENDS_ACTIVITY:
@@ -485,7 +516,7 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
 
     @SuppressWarnings("deprecation")
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         removeDialog(DIALOG_SHOW_DETAILS);
         super.onDestroy();
     }
