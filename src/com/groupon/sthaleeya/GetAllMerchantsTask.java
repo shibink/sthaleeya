@@ -32,7 +32,6 @@ public class GetAllMerchantsTask extends AsyncTask<Void, Void, List<Merchant>> {
             HttpClient client = new DefaultHttpClient();
             HttpResponse response;
             stringBuilder = new StringBuilder();
-
             response = client.execute(httppost);
             HttpEntity entity = response.getEntity();
             InputStream stream = entity.getContent();

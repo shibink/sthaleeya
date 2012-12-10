@@ -60,6 +60,5 @@ public class fbLoginActivity extends FacebookActivity {
                     });
             Request.executeBatchAsync(request);
         }
-
     }
 }

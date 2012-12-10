@@ -16,6 +16,8 @@
 
 package com.groupon.sthaleeya.osm;
 
+import java.util.List;
+
 import com.groupon.sthaleeya.R;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -25,6 +27,7 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
 import com.facebook.FacebookException;
+import com.facebook.model.GraphUser;
 import com.facebook.widget.FriendPickerFragment;
 import com.facebook.widget.PickerFragment;
 
@@ -77,6 +80,10 @@ public class PickFriendsActivity extends FragmentActivity {
             @Override
             public void onDoneButtonClicked(PickerFragment<?> fragment) {
             	Log.i("fb",friendPickerFragment.getSelection().size()+"");
+            	List<GraphUser> friends=friendPickerFragment.getSelection();
+            	for(GraphUser friend:friends){
+            		Log.i("fb",friend.getName());
+            	}
                 setResult(RESULT_OK, null);
                 finish();
             }
