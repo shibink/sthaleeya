@@ -1,20 +1,15 @@
 package com.groupon.sthaleeya.osm;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.facebook.FacebookActivity;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
-
-import com.facebook.FacebookActivity;
-import com.groupon.sthaleeya.Constants;
 
 public class fbLoginActivity extends FacebookActivity {        
 		@Override
