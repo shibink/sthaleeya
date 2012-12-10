@@ -13,20 +13,20 @@ import com.facebook.model.GraphUser;
 
 public class fbLoginActivity extends FacebookActivity {        
 		@Override
-		public void onCreate(Bundle savedInstanceState) {
-		  super.onCreate(savedInstanceState);
-		  SessionState state=this.getSessionState();
-		  if (state.isOpened()) {
-			  this.closeSession();
-			  Intent intent = new Intent();
-              intent.putExtra("userName", "Guest");
-              setResult(RESULT_OK, intent);
-              finish();
-	    } else if (state.isClosed()) {
-	    	this.openSession();
-	    }
-		  
-		}
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        SessionState state = this.getSessionState();
+        if (state == null || state.isClosed()) {
+            this.openSession();
+        } else if (state.isOpened()) {
+            this.closeSession();
+            Intent intent = new Intent();
+            intent.putExtra("userName", "Guest");
+            setResult(RESULT_OK, intent);
+            finish();
+        }
+
+    }
 		@Override
 		protected void onSessionStateChange(SessionState state, Exception exception) {
 		  if (state.isOpened()) {
