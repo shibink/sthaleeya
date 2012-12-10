@@ -80,4 +80,6 @@ public class Constants {
     public static final String BUSINESS_CLOSE_HR="closeHr";
     public static final String BUSINESS_CLOSE_MIN="closeMin";
     public static final String KEY_REFRESH_RATE = "refreshRate";
+    
+    public static final String SERVER_URL = "http://10.1.23.243/sthaleeya_all.php";
 }

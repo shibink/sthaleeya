@@ -1,20 +1,10 @@
 package com.groupon.sthaleeya.osm;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
@@ -58,7 +48,7 @@ import com.groupon.sthaleeya.utils.LocationUtil;
  * Class to load open street map
  */
 public class OSMLoader extends FragmentActivity implements LocationListener {
-	private final int PICK_FRIENDS_ACTIVITY = 1;
+    private final int PICK_FRIENDS_ACTIVITY = 1;
     private static final int DIALOG_SHOW_DETAILS = 1;
     private FbFragment fbFragment;
     private static final String TAG = "OSMLoader";
@@ -67,7 +57,7 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
     private static final float ONE_MILE = 1609.34f; // 1 mile = 1609.34 meter
     private static final int ONE_MINUTE = 60 * 1000;
     private static final int REQ_SETTINGS = 0;
-    public static OSMLoader osmloader=null;
+    public static OSMLoader osmloader = null;
 
     public static enum MERCHANT_STATUS {
         CLOSED, ABOUT_TO_CLOSE, OPEN
@@ -87,7 +77,7 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        OSMLoader.osmloader=this;
+        OSMLoader.osmloader = this;
         Log.d(TAG, "OSM loader activity created");
         setContentView(R.layout.activity_osmloader);
 
@@ -147,23 +137,28 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            	Intent intent = new Intent();
-                intent.setComponent(new ComponentName("com.groupon.sthaleeya", "com.groupon.sthaleeya.osm.fbLoginActivity"));
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName("com.groupon.sthaleeya",
+                        "com.groupon.sthaleeya.osm.fbLoginActivity"));
                 startActivityForResult(intent, REQ_SETTINGS);
-                //finish();
-                //call facebook activity
-            	//get the result
+                // finish();
+                // call facebook activity
+                // get the result
             }
         });
         Button button4 = (Button) findViewById(R.id.pickFriendsButton);
         button4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            	Intent intent = new Intent();
-            	intent.setComponent(new ComponentName("com.groupon.sthaleeya", "com.groupon.sthaleeya.osm.PickFriendsActivity"));
-                // Note: The following line is optional, as multi-select behavior is the default for
-                // FriendPickerFragment. It is here to demonstrate how parameters could be passed to the
-                // friend picker if single-select functionality was desired, or if a different user ID was
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName("com.groupon.sthaleeya",
+                        "com.groupon.sthaleeya.osm.PickFriendsActivity"));
+                // Note: The following line is optional, as multi-select
+                // behavior is the default for
+                // FriendPickerFragment. It is here to demonstrate how
+                // parameters could be passed to the
+                // friend picker if single-select functionality was desired, or
+                // if a different user ID was
                 // desired (for instance, to see friends of a friend).
                 PickFriendsActivity.populateParameters(intent, null, true, true);
                 startActivityForResult(intent, PICK_FRIENDS_ACTIVITY);
@@ -230,7 +225,7 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
         case PICK_FRIENDS_ACTIVITY:
-           // displaySelectedFriends(resultCode);
+            // displaySelectedFriends(resultCode);
             break;
         case REQ_SETTINGS:
             if (resultCode == RESULT_OK) {
@@ -251,15 +246,16 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
                     }
                 }
                 if (extras != null && extras.containsKey("userName")) {
-                	String user=extras.getString("userName");
-                	TextView welcome = (TextView) findViewById(R.id.userName);
-		            welcome.setText("Hello " + user + "!");
-		            Log.i("fb",welcome.getText()+"");
+                    String user = extras.getString("userName");
+                    TextView welcome = (TextView) findViewById(R.id.userName);
+                    welcome.setText("Hello " + user + "!");
+                    Log.i("fb", welcome.getText() + "");
                 }
                 if (extras != null && extras.containsKey("friends_names")) {
-                	ArrayList<String> friends_names=extras.getStringArrayList("friends_names");
-                	for(String friend:friends_names)
-                		Log.i("fb",friend);
+                    ArrayList<String> friends_names = extras
+                            .getStringArrayList("friends_names");
+                    for (String friend : friends_names)
+                        Log.i("fb", friend);
                 }
             }
             break;
@@ -316,15 +312,16 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
     }
 
     private void addMerchantsToDisplay() {
-    	
-		new GetAllMerchantsTask().execute();
+
+        new GetAllMerchantsTask().execute();
     }
-    public MERCHANT_STATUS getBusinessHour(Merchant merchant){
-    	 Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"
-                 + merchant.getTimezone()));
-         int day = c.get(Calendar.DAY_OF_WEEK) - 1;
-    	MerchantBusinessHours businessHours=merchant.getBusinessHours().get(0);
-    	if (((businessHours.getOpenHr() == c.get(Calendar.HOUR_OF_DAY)) && (businessHours
+
+    public MERCHANT_STATUS getBusinessHour(Merchant merchant) {
+        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"
+                + merchant.getTimezone()));
+        int day = c.get(Calendar.DAY_OF_WEEK) - 1;
+        MerchantBusinessHours businessHours = merchant.getBusinessHours().get(0);
+        if (((businessHours.getOpenHr() == c.get(Calendar.HOUR_OF_DAY)) && (businessHours
                 .getOpenMin() <= (c.get(Calendar.MINUTE))))
                 || ((businessHours.getOpenHr() <= c.get(Calendar.HOUR_OF_DAY))))
             if (((businessHours.getCloseHr() == c.get(Calendar.HOUR_OF_DAY)) && (businessHours
@@ -340,7 +337,8 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
             }
         return OSMLoader.MERCHANT_STATUS.CLOSED;
     }
-    public void loadAllMerchants(List<Merchant> merchants){
+
+    public void loadAllMerchants(List<Merchant> merchants) {
         EditText listView = (EditText) findViewById(R.id.listView);
         listView.setText("");
         overlayItemArray.clear();
@@ -366,14 +364,15 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
             Location location = new Location(LocationManager.GPS_PROVIDER);
             location.setLatitude(merchant.getLatitude());
             location.setLongitude(merchant.getLongitude());
-    		
-           if (currentLocation.distanceTo(location) <= (ONE_MILE * localRadius)) {
-            	MERCHANT_STATUS check=getBusinessHour(merchant);
-            	Log.i("dbcheck",check+"");
-            	/*if(check==MERCHANT_STATUS.ABOUT_TO_CLOSE)
-            		item.setMarker(closingMarker);
-            	else if (check ==MERCHANT_STATUS.CLOSED) // Closed
-            		continue;*/
+
+            if (currentLocation.distanceTo(location) <= (ONE_MILE * localRadius)) {
+                MERCHANT_STATUS check = getBusinessHour(merchant);
+                Log.i("dbcheck", check + "");
+                /*
+                 * if(check==MERCHANT_STATUS.ABOUT_TO_CLOSE)
+                 * item.setMarker(closingMarker); else if (check
+                 * ==MERCHANT_STATUS.CLOSED) // Closed continue;
+                 */
                 overlayItemArray.add(item);
                 listView.append(++i + ". " + merchant.getName() + "\n" + description
                         + "\n\n");
@@ -395,7 +394,7 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
     }
 
     OnItemGestureListener<OverlayItem> onItemGestureListener = new OnItemGestureListener<OverlayItem>() {
-    	
+
         @Override
         public boolean onItemLongPress(int arg0, OverlayItem arg1) {
             return false;
@@ -409,19 +408,22 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
                 extras.putString(Constants.KEY_NAME, item.mTitle);
             }
             if (item.mDescription != null && !item.mDescription.isEmpty()) {
-                //Merchant merchant = jdbc.getMerchant(Long.parseLong(item.mDescription));
-                new GetDetailsOfMerchant().execute(this,Long.parseLong(item.mDescription),extras);
+                // Merchant merchant =
+                // jdbc.getMerchant(Long.parseLong(item.mDescription));
+                new GetDetailsOfMerchant().execute(this,
+                        Long.parseLong(item.mDescription), extras);
             } else {
                 extras.putString(Constants.KEY_DETAILS, "");
             }
-            //showDialog(DIALOG_SHOW_DETAILS, extras);
+            // showDialog(DIALOG_SHOW_DETAILS, extras);
             return true;
         }
 
     };
-    public void showMerchantOnTap(Merchant merchant,Bundle extras){
-    	extras.putString(Constants.KEY_DETAILS, getDescription(merchant));
-    	 showDialog(DIALOG_SHOW_DETAILS, extras);
+
+    public void showMerchantOnTap(Merchant merchant, Bundle extras) {
+        extras.putString(Constants.KEY_DETAILS, getDescription(merchant));
+        showDialog(DIALOG_SHOW_DETAILS, extras);
     }
 
     private void displayLocation(Location loc) {
