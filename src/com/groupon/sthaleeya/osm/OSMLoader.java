@@ -140,9 +140,6 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
                 intent.setComponent(new ComponentName("com.groupon.sthaleeya",
                         "com.groupon.sthaleeya.osm.fbLoginActivity"));
                 startActivityForResult(intent, REQ_SETTINGS);
-                // finish();
-                // call facebook activity
-                // get the result
             }
         });
         Button button4 = (Button) findViewById(R.id.pickFriendsButton);
@@ -152,13 +149,6 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName("com.groupon.sthaleeya",
                         "com.groupon.sthaleeya.osm.PickFriendsActivity"));
-                // Note: The following line is optional, as multi-select
-                // behavior is the default for
-                // FriendPickerFragment. It is here to demonstrate how
-                // parameters could be passed to the
-                // friend picker if single-select functionality was desired, or
-                // if a different user ID was
-                // desired (for instance, to see friends of a friend).
                 PickFriendsActivity.populateParameters(intent, null, true, true);
                 startActivityForResult(intent, PICK_FRIENDS_ACTIVITY);
             }
@@ -373,7 +363,6 @@ public class OSMLoader extends FragmentActivity implements LocationListener {
                 //else if (check == MERCHANT_STATUS.CLOSED) {
                    // continue;
                 //}
-
                 overlayItemArray.add(item);
                 listView.append(++i + ". " + merchant.getName() + "\n" + description
                         + "\n\n");
