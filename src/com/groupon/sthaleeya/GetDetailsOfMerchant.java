@@ -46,8 +46,10 @@ public class GetDetailsOfMerchant extends AsyncTask<Object, Void, Object[]> {
             Log.i(TAG, stringBuilder.toString());
             // parse json data
             try {
-                JSONArray jArray = new JSONArray(stringBuilder.toString());
-                JSONObject json_data = jArray.getJSONObject(0);
+                JSONObject jArray = new JSONObject(stringBuilder.toString());
+                JSONArray json = jArray.getJSONArray("merchants");
+                JSONObject json_data=json.getJSONObject(0);
+                
                 newMerchant = new Merchant();
                 MerchantBusinessHours businessHours = new MerchantBusinessHours();
                 businessHours.setDay(json_data.getString("day"));

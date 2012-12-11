@@ -186,8 +186,8 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
                                     Object[] object=new Object[4];
                                     object[0]=user.getId();
                                     object[1]=user.getName();
-                                    object[2]=OSMLoader.this.defaultLocation.getLatitude();
-                                    object[3]=OSMLoader.this.defaultLocation.getLongitude();
+                                    object[2]=currentLocation.getLatitude();
+                                    object[3]=currentLocation.getLongitude();
                                     new AddUserTask().execute(object);
                                 }
                                // new RetrieveFriendsTask().execute(new Object[]{user.getId()});
