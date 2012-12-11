@@ -25,7 +25,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -149,8 +148,8 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
                 }
             }
         });
-        Button button4 = (Button) findViewById(R.id.pickFriendsButton);
-        button4.setOnClickListener(new View.OnClickListener() {
+        ImageView addFriend = (ImageView) findViewById(R.id.add_friends_img);
+        addFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
