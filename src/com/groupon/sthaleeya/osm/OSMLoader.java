@@ -169,66 +169,60 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
         getUser(this.getSessionState());
     }
 
-    private void getUser(SessionState state){
+    private void getUser(SessionState state) {
         final ImageView addFriend = (ImageView) findViewById(R.id.add_friends_img);
-        if (state!=null && state.isOpened()) {
+        if (state != null && state.isOpened()) {
             Request request = Request.newMeRequest(this.getSession(),
                     new Request.GraphUserCallback() {
                         @Override
                         public void onCompleted(GraphUser user, Response response) {
-                            String name=null, id = null;
+                            String name = null, id = null;
                             if (user != null) {
                                 TextView welcome = (TextView) findViewById(R.id.userName);
                                 welcome.setText("Hello " + user.getName() + "!");
                                 Location currentLocation = locMgr
                                         .getLastKnownLocation(LocationManager.GPS_PROVIDER);
                                 if (currentLocation != null) {
-                                    Object[] object=new Object[4];
-                                    object[0]=user.getId();
-                                    object[1]=user.getName();
-                                    object[2]=currentLocation.getLatitude();
-                                    object[3]=currentLocation.getLongitude();
+                                    Object[] object = new Object[4];
+                                    object[0] = user.getId();
+                                    object[1] = user.getName();
+                                    object[2] = currentLocation.getLatitude();
+                                    object[3] = currentLocation.getLongitude();
                                     new AddUserTask().execute(object);
                                 }
-                                id=user.getId();
+                                id = user.getId();
                                 name = user.getName();
                                 addFriend.setVisibility(View.VISIBLE);
                             } else {
                                 addFriend.setVisibility(View.GONE);
                             }
-                            
+
                             pushInSharedPref(id, name);
                             refreshMap();
                         }
 
-                        
                     });
             Request.executeBatchAsync(request);
-        }
-        else{
+        } else {
             TextView welcome = (TextView) findViewById(R.id.userName);
             welcome.setText("Hello Guest!");
             addFriend.setVisibility(View.GONE);
             pushInSharedPref(null, null);
             refreshMap();
         }
-            
     }
-    
+
     private void pushInSharedPref(String id, String name) {
-        if (id != null && name != null) {
-            SharedPreferences pref = getSharedPreferences(OSMLoader.PREFERENCE_FILE, 0);
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putString("userId", id);
-            editor.putString("userName", name);
-            editor.commit();
-        }
+        SharedPreferences pref = getSharedPreferences(OSMLoader.PREFERENCE_FILE, 0);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("userId", id);
+        editor.putString("userName", name);
+        editor.commit();
     }
 
     @Override
     protected void onSessionStateChange(SessionState state, Exception exception) {
        getUser(state);
-       refreshMap();
     }
     private void displayView(boolean isMapView) {
         Button button = (Button) findViewById(R.id.switch_view);
@@ -456,7 +450,7 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
                    // continue;
                 //}
                 overlayItemArray.add(item);
-                listView.append(++i + ". " + merchant.getName() + "\n" + description
+                listView.append(++i + ". " + merchant.getName() + "\n" + getDescription(merchant)
                         + "\n\n");
             }
         }
