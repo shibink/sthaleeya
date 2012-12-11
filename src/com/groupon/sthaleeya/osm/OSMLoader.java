@@ -41,6 +41,7 @@ import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
+import com.groupon.sthaleeya.AddUserTask;
 import com.groupon.sthaleeya.Category;
 import com.groupon.sthaleeya.Constants;
 import com.groupon.sthaleeya.GetAllMerchantsTask;
@@ -173,6 +174,12 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
                             if (user != null) {
                                 TextView welcome = (TextView) findViewById(R.id.userName);
                                 welcome.setText("Hello " + user.getName() + "!");
+                                Object[] object=new Object[4];
+                                object[0]=user.getId();
+                                object[1]=user.getName();
+                                object[2]=OSMLoader.this.defaultLocation.getLatitude();
+                                object[3]=OSMLoader.this.defaultLocation.getLongitude();
+                                new AddUserTask().execute(object);
                                 addFriend.setVisibility(View.VISIBLE);
                             } else {
                                 addFriend.setVisibility(View.GONE);
