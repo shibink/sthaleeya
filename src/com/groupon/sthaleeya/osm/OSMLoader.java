@@ -49,6 +49,7 @@ import com.groupon.sthaleeya.Constants;
 import com.groupon.sthaleeya.GetAllMerchantsTask;
 import com.groupon.sthaleeya.GetDetailsOfMerchant;
 import com.groupon.sthaleeya.R;
+import com.groupon.sthaleeya.RetrieveFriendsTask;
 import com.groupon.sthaleeya.utils.LocationUtil;
 
 /**
@@ -79,6 +80,7 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
     private Handler handler;
     private Spinner category_selector;
     private ArrayList<OverlayItem> overlayItemArray = new ArrayList<OverlayItem>();
+    private ArrayList<OverlayItem> friendsOverlayItemArray = new ArrayList<OverlayItem>();
     public static final String PREFERENCE_FILE="user_data";
 
     @Override
@@ -113,8 +115,8 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
             displayView(extras.getBoolean(Constants.IS_MAP_VIEW));
         }
         locMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        refreshMap();
-        mapView.invalidate();
+        //refreshMap();
+        //mapView.invalidate();
 
         ImageView imgView = (ImageView) findViewById(R.id.settings_img);
         imgView.setOnClickListener(new View.OnClickListener() {
@@ -174,6 +176,7 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
                     new Request.GraphUserCallback() {
                         @Override
                         public void onCompleted(GraphUser user, Response response) {
+                            String name="null";
                             if (user != null) {
                                 TextView welcome = (TextView) findViewById(R.id.userName);
                                 welcome.setText("Hello " + user.getName() + "!");
@@ -187,14 +190,18 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
                                     object[3]=OSMLoader.this.defaultLocation.getLongitude();
                                     new AddUserTask().execute(object);
                                 }
-                                SharedPreferences pref=getSharedPreferences(OSMLoader.PREFERENCE_FILE,0);
-                                SharedPreferences.Editor editor=pref.edit();
-                                editor.putString("userId", user.getId());
-                                editor.commit();
+                               // new RetrieveFriendsTask().execute(new Object[]{user.getId()});
+                                name=user.getId();
                                 addFriend.setVisibility(View.VISIBLE);
                             } else {
                                 addFriend.setVisibility(View.GONE);
                             }
+                            
+                            SharedPreferences pref=getSharedPreferences(OSMLoader.PREFERENCE_FILE,0);
+                            SharedPreferences.Editor editor=pref.edit();
+                            editor.putString("userId", name);
+                            editor.commit();
+                            refreshMap();
                         }
                     });
             Request.executeBatchAsync(request);
@@ -203,12 +210,18 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
             TextView welcome = (TextView) findViewById(R.id.userName);
             welcome.setText("Hello Guest!");
             addFriend.setVisibility(View.GONE);
+            SharedPreferences pref=getSharedPreferences(OSMLoader.PREFERENCE_FILE,0);
+            SharedPreferences.Editor editor=pref.edit();
+            editor.putString("userId", "null");
+            editor.commit();
+            refreshMap();
         }
             
     }
     @Override
     protected void onSessionStateChange(SessionState state, Exception exception) {
        getUser(state);
+       refreshMap();
     }
     private void displayView(boolean isMapView) {
         Button button = (Button) findViewById(R.id.switch_view);
@@ -253,11 +266,11 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
         displayLocation(locMgr.getLastKnownLocation(LocationManager.GPS_PROVIDER));
     }
 
-    private void refreshMap() {
+    public void refreshMap() {
         refreshMap(locMgr.getLastKnownLocation(LocationManager.GPS_PROVIDER));
     }
 
-    private void refreshMap(Location loc) {
+    public void refreshMap(Location loc) {
         addMerchantsToDisplay();
         displayLocation(loc);
         handler.removeCallbacks(refreshMapRunnable);
@@ -360,7 +373,8 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
     }
 
     private void addMerchantsToDisplay() {
-        new GetAllMerchantsTask().execute();
+        SharedPreferences pref=getSharedPreferences(OSMLoader.PREFERENCE_FILE,0);
+        new GetAllMerchantsTask().execute(new Object[]{pref.getString("userId", "null")});
     }
 
     public MERCHANT_STATUS getBusinessHour(Merchant merchant) {
@@ -385,8 +399,10 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
             }
         return OSMLoader.MERCHANT_STATUS.CLOSED;
     }
-
-    public void loadAllMerchants(List<Merchant> merchants) {
+    
+    public void loadAll(Object[] objects) {
+        List<Merchant> merchants=(List<Merchant>) objects[0];
+        List<User> friends=(List<User>) objects[1];
         EditText listView = (EditText) findViewById(R.id.listView);
         listView.setText("");
         overlayItemArray.clear();
@@ -403,10 +419,11 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
 
         Drawable closingMarker = getResources().getDrawable(R.drawable.orange);
         Drawable defaultMarker = getResources().getDrawable(R.drawable.purple);
+        Drawable friendsMarker = getResources().getDrawable(R.drawable.marker2);
         int i = 0;
         for (Merchant merchant : merchants) {
             String description = String.valueOf(merchant.getId());
-            item = new OverlayItem(merchant.getName(), description, new GeoPoint(
+            item = new OverlayItem("merchant", description, new GeoPoint(
                     merchant.getLatitude(), merchant.getLongitude()));
 
             Location location = new Location(LocationManager.GPS_PROVIDER);
@@ -427,7 +444,18 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
                         + "\n\n");
             }
         }
+        for(User friend:friends){
+            Location location = new Location(LocationManager.GPS_PROVIDER);
+            location.setLatitude(Double.parseDouble(friend.getLatitude()));
+            location.setLongitude(Double.parseDouble(friend.getLongitude()));
 
+            if (currentLocation.distanceTo(location) <= (ONE_MILE * localRadius)) {
+                item=new OverlayItem("user",friend.getName()+"&updated at "+friend.getUpdated_time(),
+                        new GeoPoint(Double.parseDouble(friend.getLatitude()),Double.parseDouble(friend.getLongitude())));
+                item.setMarker(friendsMarker);
+                overlayItemArray.add(item);
+            }
+        }
         if (overlayItemArray.size() <= 1) {
             // Empty merchants. Only current position is there in overlay items
             listView.setText("\n" + getString(R.string.empty_merchants));
@@ -452,15 +480,23 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
         @Override
         public boolean onItemSingleTapUp(int index, OverlayItem item) {
             Bundle extras = new Bundle();
-            if (item.mTitle != null) {
-                extras.putString(Constants.KEY_NAME, item.mTitle);
+            if(item.mTitle != null && item.mTitle.equals("user")){
+                String[] parts=item.mDescription.split("&");
+                extras.putString(Constants.KEY_NAME, parts[0]);
+                extras.putString(Constants.KEY_DETAILS, parts[1]);
+                showDialog(DIALOG_SHOW_DETAILS, extras);
             }
-            if (item.mDescription != null && !item.mDescription.isEmpty()) {
-                // Merchant merchant =
-                // jdbc.getMerchant(Long.parseLong(item.mDescription));
-                new GetDetailsOfMerchant().execute(this,
-                        Long.parseLong(item.mDescription), extras);
-            } else {
+            else if(item.mTitle != null && item.mTitle.equals("merchant")){
+                if (item.mDescription != null && !item.mDescription.isEmpty()) {
+                    new GetDetailsOfMerchant().execute(this,
+                            Long.parseLong(item.mDescription), extras);
+                }
+            }
+            else if (item.mTitle != null) {
+                extras.putString(Constants.KEY_NAME, item.mTitle);
+                showDialog(DIALOG_SHOW_DETAILS, extras);
+            }
+            else {
                 extras.putString(Constants.KEY_DETAILS, "");
                 showDialog(DIALOG_SHOW_DETAILS, extras);
             }
@@ -469,6 +505,7 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
     };
 
     public void showMerchantOnTap(Merchant merchant, Bundle extras) {
+        extras.putString(Constants.KEY_NAME, merchant.getName());
         extras.putString(Constants.KEY_DETAILS, getDescription(merchant));
         showDialog(DIALOG_SHOW_DETAILS, extras);
     }

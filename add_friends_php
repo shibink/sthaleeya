@@ -1,0 +1,22 @@
+<?php
+  include 'header.php';
+  $id=null;
+  $friends_ids=array();
+  if(array_key_exists('id',$_REQUEST)){
+        $id=$_REQUEST['id'];
+  }
+  if(array_key_exists('friends_ids',$_REQUEST)){
+        //echo $_REQUEST['friends_ids'];
+        $friends_ids=explode(',',$_REQUEST['friends_ids']);
+  }
+  $query_string=array();
+  foreach($friends_ids as $friend){
+        //echo $friend;
+        array_push($query_string,"(".$id.",".$friend.")");
+  }
+  if(empty($query_string))
+     die ("no friends added");
+  $query="insert into friends (_id,friend_id) values ".implode(',',$query_string);
+  //echo $query;
+  $data=mysql_query($query) or die(mysql_error());
+  ?>

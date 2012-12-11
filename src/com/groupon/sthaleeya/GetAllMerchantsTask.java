@@ -1,6 +1,8 @@
 package com.groupon.sthaleeya;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,33 +21,44 @@ import android.util.Log;
 import com.groupon.sthaleeya.osm.Merchant;
 import com.groupon.sthaleeya.osm.MerchantBusinessHours;
 import com.groupon.sthaleeya.osm.OSMLoader;
+import com.groupon.sthaleeya.osm.User;
 
-public class GetAllMerchantsTask extends AsyncTask<Void, Void, List<Merchant>> {
+public class GetAllMerchantsTask extends AsyncTask<Object, Void, Object[]> {
     private static final String TAG="GetAllMerchants";
 
     @Override
-    protected List<Merchant> doInBackground(Void... a) {
+    protected Object[] doInBackground(Object... a) {
         ArrayList<Merchant> merchants = new ArrayList<Merchant>();
+        List<User> friends=new ArrayList<User>();
         StringBuilder stringBuilder = null;
         try {
-            HttpPost httppost = new HttpPost(
-                    Constants.SERVER_URL + "?category=ALL");
+            HttpPost httppost;
+            Log.i(TAG,a[0].toString());
+            if(a[0].toString() !="null")
+                httppost = new HttpPost(
+                    Constants.SERVER_URL + "?category=ALL&id="+a[0].toString());
+            else 
+                httppost = new HttpPost(
+                        Constants.SERVER_URL + "?category=ALL");
             HttpClient client = new DefaultHttpClient();
             HttpResponse response;
             stringBuilder = new StringBuilder();
             response = client.execute(httppost);
             HttpEntity entity = response.getEntity();
             InputStream stream = entity.getContent();
-            int b;
-            while ((b = stream.read()) != -1) {
-                stringBuilder.append((char) b);
+            BufferedReader input=new BufferedReader(new InputStreamReader(stream));
+            String b;
+            while ((b = input.readLine()) != null) {
+                stringBuilder.append( b);
             }
 
             // parse json data
             try {
-                JSONArray jArray = new JSONArray(stringBuilder.toString());
-                for (int i = 0; i < jArray.length(); i++) {
-                    JSONObject json_data = jArray.getJSONObject(i);
+                JSONObject jobject=new JSONObject(stringBuilder.toString());
+                JSONArray merchantArray = jobject.getJSONArray("merchants");
+                JSONArray friendsArray = jobject.getJSONArray("friends");
+                for (int i = 0; i < merchantArray.length(); i++) {
+                    JSONObject json_data = merchantArray.getJSONObject(i);
                     Merchant newMerchant = new Merchant();
                     MerchantBusinessHours businessHours = new MerchantBusinessHours();
                     businessHours.setDay(json_data.getString("day"));
@@ -67,20 +80,33 @@ public class GetAllMerchantsTask extends AsyncTask<Void, Void, List<Merchant>> {
                     newMerchant.setBusinessHours(businessArray);
                     merchants.add(newMerchant);
                 }
+                for (int i = 0; i < friendsArray.length(); i++) {
+                    JSONObject json_data = friendsArray.getJSONObject(i);
+                    User friend=new User();
+                    friend.setId(json_data.getLong("id"));
+                    friend.setLatitude(json_data.getString("latitude"));
+                    friend.setLongitude(json_data.getString("longitude"));
+                    friend.setName(json_data.getString("name"));
+                    friend.setUpdated_time(json_data.getString("updated_time"));
+                    friends.add(friend);
+                }
+                
             } catch (JSONException e) {
                 Log.e(TAG, "Error parsing data " + e.toString());
             }
         } catch (Exception e) {
             Log.i(TAG, e.getMessage());
         }
-
-        return merchants;
+        Object[] object=new Object[2];
+        object[0]=merchants;
+        object[1]=friends;
+        return object;
     }
 
     @Override
-    protected void onPostExecute(List<Merchant> merchants) {
-        super.onPostExecute(merchants);
-        OSMLoader.osmloader.loadAllMerchants(merchants);
+    protected void onPostExecute(Object[] a) {
+        super.onPostExecute(a);
+        OSMLoader.osmloader.loadAll(a);
     }
 
 }

@@ -12,6 +12,9 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+
+import com.groupon.sthaleeya.osm.OSMLoader;
+
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -50,5 +53,6 @@ public class AddFriendsTask extends AsyncTask<Object, Void, Void> {
     @Override
     protected void onPostExecute(Void a) {
         super.onPostExecute(a);
+        OSMLoader.osmloader.refreshMap();
     }
 }
