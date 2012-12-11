@@ -19,6 +19,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -41,6 +42,7 @@ import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
+import com.groupon.sthaleeya.AddFriendsTask;
 import com.groupon.sthaleeya.AddUserTask;
 import com.groupon.sthaleeya.Category;
 import com.groupon.sthaleeya.Constants;
@@ -77,6 +79,7 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
     private Handler handler;
     private Spinner category_selector;
     private ArrayList<OverlayItem> overlayItemArray = new ArrayList<OverlayItem>();
+    public static final String PREFERENCE_FILE="user_data";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -171,12 +174,20 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
                             if (user != null) {
                                 TextView welcome = (TextView) findViewById(R.id.userName);
                                 welcome.setText("Hello " + user.getName() + "!");
-                                Object[] object=new Object[4];
-                                object[0]=user.getId();
-                                object[1]=user.getName();
-                                object[2]=OSMLoader.this.defaultLocation.getLatitude();
-                                object[3]=OSMLoader.this.defaultLocation.getLongitude();
-                                new AddUserTask().execute(object);
+                                Location currentLocation = locMgr
+                                        .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                                if (currentLocation != null) {
+                                    Object[] object=new Object[4];
+                                    object[0]=user.getId();
+                                    object[1]=user.getName();
+                                    object[2]=OSMLoader.this.defaultLocation.getLatitude();
+                                    object[3]=OSMLoader.this.defaultLocation.getLongitude();
+                                    new AddUserTask().execute(object);
+                                }
+                                SharedPreferences pref=getSharedPreferences(OSMLoader.PREFERENCE_FILE,0);
+                                SharedPreferences.Editor editor=pref.edit();
+                                editor.putString("userId", user.getId());
+                                editor.commit();
                             }
                         }
                     });
@@ -251,7 +262,17 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
         case PICK_FRIENDS_ACTIVITY:
-            // displaySelectedFriends(resultCode);
+            if(resultCode == RESULT_OK){
+                Bundle extras = data.getExtras();
+                if (extras != null && extras.containsKey("friends_ids")) {
+                    String[] friends_ids = extras.getStringArray("friends_ids");
+                    SharedPreferences pref=getSharedPreferences(OSMLoader.PREFERENCE_FILE,0);
+                    Object[] objectArray=new Object[2];
+                    objectArray[0]=pref.getString("userId","0");
+                    objectArray[1]=friends_ids;
+                    new AddFriendsTask().execute(objectArray);
+                }
+            }
             break;
         case REQ_SETTINGS:
             if (resultCode == RESULT_OK) {
@@ -276,12 +297,6 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
                     TextView welcome = (TextView) findViewById(R.id.userName);
                     welcome.setText("Hello " + user + "!");
                     Log.i(TAG, welcome.getText() + "");
-                }
-                if (extras != null && extras.containsKey("friends_names")) {
-                    ArrayList<String> friends_names = extras
-                            .getStringArrayList("friends_names");
-                    for (String friend : friends_names)
-                        Log.i(TAG, friend);
                 }
             }
             break;

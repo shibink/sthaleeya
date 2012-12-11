@@ -80,12 +80,14 @@ public class PickFriendsActivity extends FragmentActivity {
         friendPickerFragment.setOnDoneButtonClickedListener(new PickerFragment.OnDoneButtonClickedListener() {
             @Override
             public void onDoneButtonClicked(PickerFragment<?> fragment) {
-            	Log.i(TAG,friendPickerFragment.getSelection().size()+"");
             	List<GraphUser> friends=friendPickerFragment.getSelection();
-            	for(GraphUser friend:friends){
-            		Log.i(TAG,friend.getName());
+            	String[] friends_ids=new String[friends.size()];
+            	for(int i=0;i<friends.size();i++){
+            		friends_ids[i]=friends.get(i).getId();
             	}
-                setResult(RESULT_OK, null);
+            	Intent intent=new Intent();
+            	intent.putExtra("friends_ids", friends_ids);
+                setResult(RESULT_OK, intent);
                 finish();
             }
         });
