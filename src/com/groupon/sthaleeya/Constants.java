@@ -82,4 +82,5 @@ public class Constants {
     public static final String KEY_REFRESH_RATE = "refreshRate";
     
     public static final String SERVER_URL = "http://10.1.23.243/sthaleeya_all.php";
+    public static final String ADD_USER_URL = "http://10.1.23.243/add_user.php";
 }

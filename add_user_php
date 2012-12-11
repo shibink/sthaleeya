@@ -1,0 +1,16 @@
+<?php
+   include 'header.php';
+   $id=0;
+   $name=null;
+   $latitude=null;
+   $longitude=null;
+   if(array_key_exists('id',$_REQUEST))
+        $id=$_REQUEST['id'];
+   if(array_key_exists('name',$_REQUEST))
+        $name=$_REQUEST['name'];
+   if(array_key_exists('latitude',$_REQUEST))
+        $latitude=$_REQUEST['latitude'];
+   if(array_key_exists('longitude',$_REQUEST))
+        $longitude=$_REQUEST['longitude'];
+   $query="insert into user (_id,name,latitude,longitude,updated_time) values (".$id.",'".$name."','".$latitude."','".$longitude."',now()) on duplicate key update name='".$name."',latitude='".$latitude."',longitude='".$longitude."'";
+   mysql_query($query) or die(mysql_error());
