@@ -419,7 +419,7 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
 
         Drawable closingMarker = getResources().getDrawable(R.drawable.orange);
         Drawable defaultMarker = getResources().getDrawable(R.drawable.purple);
-        Drawable friendsMarker = getResources().getDrawable(R.drawable.marker2);
+        Drawable friendsMarker = getResources().getDrawable(R.drawable.user_image);
         int i = 0;
         for (Merchant merchant : merchants) {
             String description = String.valueOf(merchant.getId());
