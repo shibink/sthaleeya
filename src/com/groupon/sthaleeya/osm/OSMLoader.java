@@ -159,9 +159,12 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
                 startActivityForResult(intent, PICK_FRIENDS_ACTIVITY);
             }
         });
+        addFriend.setVisibility(View.GONE);
         getUser(this.getSessionState());
     }
+
     private void getUser(SessionState state){
+        final ImageView addFriend = (ImageView) findViewById(R.id.add_friends_img);
         if (state!=null && state.isOpened()) {
             Request request = Request.newMeRequest(this.getSession(),
                     new Request.GraphUserCallback() {
@@ -170,6 +173,9 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
                             if (user != null) {
                                 TextView welcome = (TextView) findViewById(R.id.userName);
                                 welcome.setText("Hello " + user.getName() + "!");
+                                addFriend.setVisibility(View.VISIBLE);
+                            } else {
+                                addFriend.setVisibility(View.GONE);
                             }
                         }
                     });
@@ -178,6 +184,7 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
         else{
             TextView welcome = (TextView) findViewById(R.id.userName);
             welcome.setText("Hello Guest!");
+            addFriend.setVisibility(View.GONE);
         }
             
     }
