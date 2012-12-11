@@ -216,19 +216,17 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
     }
     
     private void pushInSharedPref(String id, String name) {
-        if (id != null && name != null) {
             SharedPreferences pref = getSharedPreferences(OSMLoader.PREFERENCE_FILE, 0);
             SharedPreferences.Editor editor = pref.edit();
             editor.putString("userId", id);
             editor.putString("userName", name);
             editor.commit();
-        }
     }
 
     @Override
     protected void onSessionStateChange(SessionState state, Exception exception) {
        getUser(state);
-       refreshMap();
+       //refreshMap();
     }
     private void displayView(boolean isMapView) {
         Button button = (Button) findViewById(R.id.switch_view);
