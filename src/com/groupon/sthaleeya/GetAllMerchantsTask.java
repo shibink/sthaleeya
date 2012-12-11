@@ -34,12 +34,13 @@ public class GetAllMerchantsTask extends AsyncTask<Object, Void, Object[]> {
         try {
             HttpPost httppost;
             Log.i(TAG,a[0].toString());
-            if(a[0].toString() !="null")
+            if(a[0].toString() != null) {
                 httppost = new HttpPost(
                     Constants.SERVER_URL + "?category=ALL&id="+a[0].toString());
-            else 
+            } else { 
                 httppost = new HttpPost(
                         Constants.SERVER_URL + "?category=ALL");
+            }
             HttpClient client = new DefaultHttpClient();
             HttpResponse response;
             stringBuilder = new StringBuilder();

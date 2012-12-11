@@ -176,7 +176,7 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
                     new Request.GraphUserCallback() {
                         @Override
                         public void onCompleted(GraphUser user, Response response) {
-                            String name="null";
+                            String name=null, id = null;
                             if (user != null) {
                                 TextView welcome = (TextView) findViewById(R.id.userName);
                                 welcome.setText("Hello " + user.getName() + "!");
@@ -190,19 +190,18 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
                                     object[3]=currentLocation.getLongitude();
                                     new AddUserTask().execute(object);
                                 }
-                               // new RetrieveFriendsTask().execute(new Object[]{user.getId()});
-                                name=user.getId();
+                                id=user.getId();
+                                name = user.getName();
                                 addFriend.setVisibility(View.VISIBLE);
                             } else {
                                 addFriend.setVisibility(View.GONE);
                             }
                             
-                            SharedPreferences pref=getSharedPreferences(OSMLoader.PREFERENCE_FILE,0);
-                            SharedPreferences.Editor editor=pref.edit();
-                            editor.putString("userId", name);
-                            editor.commit();
+                            pushInSharedPref(id, name);
                             refreshMap();
                         }
+
+                        
                     });
             Request.executeBatchAsync(request);
         }
@@ -210,14 +209,22 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
             TextView welcome = (TextView) findViewById(R.id.userName);
             welcome.setText("Hello Guest!");
             addFriend.setVisibility(View.GONE);
-            SharedPreferences pref=getSharedPreferences(OSMLoader.PREFERENCE_FILE,0);
-            SharedPreferences.Editor editor=pref.edit();
-            editor.putString("userId", "null");
-            editor.commit();
+            pushInSharedPref(null, null);
             refreshMap();
         }
             
     }
+    
+    private void pushInSharedPref(String id, String name) {
+        if (id != null && name != null) {
+            SharedPreferences pref = getSharedPreferences(OSMLoader.PREFERENCE_FILE, 0);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString("userId", id);
+            editor.putString("userName", name);
+            editor.commit();
+        }
+    }
+
     @Override
     protected void onSessionStateChange(SessionState state, Exception exception) {
        getUser(state);
@@ -339,6 +346,15 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
+        if (location != null) {
+            Object[] object=new Object[4];
+            SharedPreferences pref=getSharedPreferences(OSMLoader.PREFERENCE_FILE,0);
+            object[0]=pref.getString("userId","0");
+            object[1]=pref.getString("userName","");
+            object[2]=location.getLatitude();
+            object[3]=location.getLongitude();
+            new AddUserTask().execute(object);
+        }
         addMerchantsToDisplay();
         displayLocation(location);
     }
@@ -374,7 +390,7 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
 
     private void addMerchantsToDisplay() {
         SharedPreferences pref=getSharedPreferences(OSMLoader.PREFERENCE_FILE,0);
-        new GetAllMerchantsTask().execute(new Object[]{pref.getString("userId", "null")});
+        new GetAllMerchantsTask().execute(new Object[]{pref.getString("userId", null)});
     }
 
     public MERCHANT_STATUS getBusinessHour(Merchant merchant) {
