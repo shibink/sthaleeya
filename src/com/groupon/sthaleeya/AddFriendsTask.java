@@ -25,7 +25,7 @@ public class AddFriendsTask extends AsyncTask<Object, Void, Void> {
     protected Void doInBackground(Object... a) {
         try {
             HttpPost httppost = new HttpPost(
-                    Constants.ADD_Friends_URL );
+                    Constants.ADD_FRIENDS_URL );
             HttpClient httpclient = new DefaultHttpClient();
             
             try {
