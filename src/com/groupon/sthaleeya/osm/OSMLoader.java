@@ -476,7 +476,7 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
             	long hour=0, min=0, day=0;
             	Date date = null;
             	try {
-					date = dateFormat.parse(friend.getUpdated_time()+" GMT");
+					date = dateFormat.parse(friend.getUpdatedTime()+" GMT");
 		            Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
 					Date current = cal.getTime();
 					long diff = current.getTime()-date.getTime();
@@ -485,14 +485,19 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
 					min = min % 60;
 					day = hour / 24;
 					hour = hour %24;
-					
                 } catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					continue;
 				}
-                
-                item=new OverlayItem("user",friend.getName()+"&Updated "+ day +" days " + hour +" hours " + min + " minutes ago",
-                        new GeoPoint(Double.parseDouble(friend.getLatitude()),Double.parseDouble(friend.getLongitude())));
+
+                StringBuilder diff = new StringBuilder();
+                diff.append((day != 0) ? (day + " days, ") : "");
+                diff.append((hour != 0) ? (hour + " hours, ") : "");
+                diff.append(min + " minutes ago");
+                item = new OverlayItem("user", friend.getName() + "&Updated " + diff.toString(),
+                        new GeoPoint(Double.parseDouble(friend.getLatitude()),
+                                Double.parseDouble(friend.getLongitude())));
                 item.setMarker(friendsMarker);
                 overlayItemArray.add(item);
             }

@@ -30,10 +30,10 @@ public class User {
     public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
-    public String getUpdated_time() {
+    public String getUpdatedTime() {
         return updated_time;
     }
-    public void setUpdated_time(String updated_time) {
+    public void setUpdatedTime(String updated_time) {
         this.updated_time = updated_time;
     }
 }

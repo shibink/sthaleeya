@@ -88,7 +88,7 @@ public class GetAllMerchantsTask extends AsyncTask<Object, Void, Object[]> {
                     friend.setLatitude(json_data.getString("latitude"));
                     friend.setLongitude(json_data.getString("longitude"));
                     friend.setName(json_data.getString("name"));
-                    friend.setUpdated_time(json_data.getString("updated_time"));
+                    friend.setUpdatedTime(json_data.getString("updated_time"));
                     friends.add(friend);
                 }
                 
