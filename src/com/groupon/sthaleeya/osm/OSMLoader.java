@@ -80,7 +80,6 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
     private Handler handler;
     private Spinner category_selector;
     private ArrayList<OverlayItem> overlayItemArray = new ArrayList<OverlayItem>();
-    private ArrayList<OverlayItem> friendsOverlayItemArray = new ArrayList<OverlayItem>();
     public static final String PREFERENCE_FILE="user_data";
 
     @Override
@@ -115,8 +114,6 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
             displayView(extras.getBoolean(Constants.IS_MAP_VIEW));
         }
         locMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        //refreshMap();
-        //mapView.invalidate();
 
         ImageView imgView = (ImageView) findViewById(R.id.settings_img);
         imgView.setOnClickListener(new View.OnClickListener() {
@@ -423,7 +420,7 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
         }
 
         String userDescription = getSharedPreferences(OSMLoader.PREFERENCE_FILE, 0)
-                .getString("userName", "");
+                .getString("userName", null);
         if (userDescription == null) {
             userDescription = "";
         } else {
