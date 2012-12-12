@@ -1,7 +1,12 @@
 package com.groupon.sthaleeya.osm;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -69,7 +74,10 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
     public static enum MERCHANT_STATUS {
         CLOSED, ABOUT_TO_CLOSE, OPEN
     };
-
+    
+    
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss Z");
+  
     private Category category = Category.ALL;
     private int localRadius = 20; // 20 miles
     private long refreshRate = 30 * ONE_MINUTE; // 30 minutes
@@ -460,7 +468,25 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
             location.setLongitude(Double.parseDouble(friend.getLongitude()));
 
             if (currentLocation.distanceTo(location) <= (ONE_MILE * localRadius)) {
-                item=new OverlayItem("user",friend.getName()+"&updated at "+friend.getUpdated_time(),
+            	long hour=0, min=0, day=0;
+            	Date date = null;
+            	try {
+					date = dateFormat.parse(friend.getUpdated_time()+" GMT");
+		            Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
+					Date current = cal.getTime();
+					long diff = current.getTime()-date.getTime();
+					min = diff / (1000 * 60);
+					hour = min / 60;
+					min = min % 60;
+					day = hour / 24;
+					hour = hour %24;
+					
+                } catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+                
+                item=new OverlayItem("user",friend.getName()+"&Updated "+ day +" days " + hour +" hours " + min + " minutes ago",
                         new GeoPoint(Double.parseDouble(friend.getLatitude()),Double.parseDouble(friend.getLongitude())));
                 item.setMarker(friendsMarker);
                 overlayItemArray.add(item);
