@@ -89,6 +89,7 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
     private Spinner category_selector;
     private ArrayList<OverlayItem> overlayItemArray = new ArrayList<OverlayItem>();
     public static final String PREFERENCE_FILE="user_data";
+    public List<User> friends=null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -163,18 +164,25 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
         addFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName("com.groupon.sthaleeya",
-                        "com.groupon.sthaleeya.osm.PickFriendsActivity"));
-                PickFriendsActivity.populateParameters(intent, null, true, true);
-                startActivityForResult(intent, PICK_FRIENDS_ACTIVITY);
+                SharedPreferences pref=getSharedPreferences(OSMLoader.PREFERENCE_FILE,0);
+                Object[] objectArray=new Object[1];
+                objectArray[0]=pref.getString("userId","0");
+                new RetrieveFriendsTask().execute(objectArray);
             }
         });
         addFriend.setVisibility(View.GONE);
         getUser(this.getSessionState());
     }
 
-    private void getUser(SessionState state) {
+    public void pickFriendsActivity(List<User> friends){
+        OSMLoader.this.friends=friends;
+        Intent intent = new Intent();
+        intent.setComponent(new ComponentName("com.groupon.sthaleeya",
+                "com.groupon.sthaleeya.osm.PickFriendsActivity"));
+        PickFriendsActivity.populateParameters(intent, null, true, true);
+        startActivityForResult(intent, PICK_FRIENDS_ACTIVITY);
+    }
+    private void getUser(SessionState state){
         final ImageView addFriend = (ImageView) findViewById(R.id.add_friends_img);
         if (state != null && state.isOpened()) {
             Request request = Request.newMeRequest(this.getSession(),

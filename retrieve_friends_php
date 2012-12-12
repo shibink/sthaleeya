@@ -1,0 +1,20 @@
+<?php
+   include 'header.php';
+   $id=0;
+   if(array_key_exists('id',$_REQUEST))
+     	$id=$_REQUEST['id'];
+   $query="select a.* from user a inner join friends b on a._id=b._id and b.friend_id=".$id;
+   $data= mysql_query($query) or die(mysql_error());
+   $friends=array();
+   $info=null;
+   while( $info=mysql_fetch_row($data)){
+   	   $friend=array();
+   	   $friend['id']=$info['_id'];
+   	   $friend['name']=$info['name'];
+   	   $friend['latitude']=$info['latitude'];
+   	   $friend['longitude']=$info['longitude'];
+   	   $friend['updated_time']=$info['updated_time'];
+   	   array_push($friends,$friend);
+   } 	
+   echo json_encode($friends);
+?>

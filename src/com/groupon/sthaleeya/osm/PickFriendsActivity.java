@@ -30,6 +30,7 @@ import com.facebook.FacebookException;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.FriendPickerFragment;
 import com.facebook.widget.PickerFragment;
+import com.facebook.widget.PickerFragment.GraphObjectFilter;
 
 // This class provides an example of an Activity that uses FriendPickerFragment to display a list of
 // the user's friends. It takes a programmatic approach to creating the FriendPickerFragment with the
@@ -69,7 +70,7 @@ public class PickFriendsActivity extends FragmentActivity {
             // incorrect if the fragment was modified programmatically since it was created.)
             friendPickerFragment = (FriendPickerFragment) fm.findFragmentById(R.id.friend_picker_fragment);
         }
-
+       
         friendPickerFragment.setOnErrorListener(new PickerFragment.OnErrorListener() {
             @Override
             public void onError(PickerFragment<?> fragment, FacebookException error) {
@@ -89,6 +90,18 @@ public class PickFriendsActivity extends FragmentActivity {
             	intent.putExtra("friends_ids", friends_ids);
                 setResult(RESULT_OK, intent);
                 finish();
+            }
+        });
+        friendPickerFragment.setFilter(new GraphObjectFilter<GraphUser>(){
+
+            @Override
+            public boolean includeItem(GraphUser graphObject) {
+                for(User friend:OSMLoader.osmloader.friends){
+                    if(Long.parseLong(graphObject.getId())==(friend.getId())){
+                        return false;
+                    }
+                }
+                return true;
             }
         });
     }

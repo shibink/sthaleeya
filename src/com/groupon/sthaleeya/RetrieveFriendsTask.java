@@ -57,10 +57,6 @@ public class RetrieveFriendsTask extends AsyncTask<Object, Void, List<User>> {
                         JSONObject json_data = jArray.getJSONObject(i);
                         User friend=new User();
                         friend.setId(json_data.getLong("id"));
-                        friend.setLatitude(json_data.getString("latitude"));
-                        friend.setLongitude(json_data.getString("longitude"));
-                        friend.setName(json_data.getString("name"));
-                        friend.setUpdatedTime(json_data.getString("updated_time"));
                         friends.add(friend);
                     }
                 } catch (JSONException e) {
@@ -77,6 +73,7 @@ public class RetrieveFriendsTask extends AsyncTask<Object, Void, List<User>> {
     @Override
     protected void onPostExecute(List<User> a) {
         super.onPostExecute(a);
-       // OSMLoader.osmloader.loadFriends(a);
+        OSMLoader.osmloader.pickFriendsActivity(a);
+        
     }
 }
