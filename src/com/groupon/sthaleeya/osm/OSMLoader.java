@@ -422,8 +422,15 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
             currentLocation = defaultLocation;
         }
 
-        OverlayItem item = new OverlayItem("user", "You&You are here !!", new GeoPoint(
-                currentLocation.getLatitude(), currentLocation.getLongitude()));
+        String userName = getSharedPreferences(OSMLoader.PREFERENCE_FILE, 0).getString(
+                "userName", null);
+        if (userName == null) {
+            userName = "";
+        }
+
+        OverlayItem item = new OverlayItem("user", userName + "&You are here !!",
+                new GeoPoint(currentLocation.getLatitude(),
+                        currentLocation.getLongitude()));
         item.setMarker(getResources().getDrawable(R.drawable.balloon_overlay));
         overlayItemArray.add(item);
 
