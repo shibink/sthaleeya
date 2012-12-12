@@ -88,7 +88,6 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
     private Handler handler;
     private Spinner category_selector;
     private ArrayList<OverlayItem> overlayItemArray = new ArrayList<OverlayItem>();
-    private ArrayList<OverlayItem> friendsOverlayItemArray = new ArrayList<OverlayItem>();
     public static final String PREFERENCE_FILE="user_data";
 
     @Override
@@ -123,8 +122,6 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
             displayView(extras.getBoolean(Constants.IS_MAP_VIEW));
         }
         locMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        //refreshMap();
-        //mapView.invalidate();
 
         ImageView imgView = (ImageView) findViewById(R.id.settings_img);
         imgView.setOnClickListener(new View.OnClickListener() {
@@ -430,8 +427,16 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
             currentLocation = defaultLocation;
         }
 
-        OverlayItem item = new OverlayItem("user", "You&You are here !!", new GeoPoint(
-                currentLocation.getLatitude(), currentLocation.getLongitude()));
+        String userDescription = getSharedPreferences(OSMLoader.PREFERENCE_FILE, 0)
+                .getString("userName", null);
+        if (userDescription == null) {
+            userDescription = "";
+        } else {
+            userDescription += "&";
+        }
+        OverlayItem item = new OverlayItem("user", userDescription + "You are here !!",
+                new GeoPoint(currentLocation.getLatitude(),
+                        currentLocation.getLongitude()));
         item.setMarker(getResources().getDrawable(R.drawable.balloon_overlay));
         overlayItemArray.add(item);
 
@@ -516,13 +521,15 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
         @Override
         public boolean onItemSingleTapUp(int index, OverlayItem item) {
             Bundle extras = new Bundle();
-            if(item.mTitle != null && item.mTitle.equals("user")){
+            if("user".equals(item.mTitle)){
                 String[] parts=item.mDescription.split("&");
                 extras.putString(Constants.KEY_NAME, parts[0]);
-                extras.putString(Constants.KEY_DETAILS, parts[1]);
+                if (parts.length > 1) {
+                    extras.putString(Constants.KEY_DETAILS, parts[1]);
+                }
                 showDialog(DIALOG_SHOW_DETAILS, extras);
             }
-            else if(item.mTitle != null && item.mTitle.equals("merchant")){
+            else if("merchant".equals(item.mTitle)){
                 if (item.mDescription != null && !item.mDescription.isEmpty()) {
                     new GetDetailsOfMerchant().execute(this,
                             Long.parseLong(item.mDescription), extras);
@@ -562,10 +569,6 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
 
         switch (id) {
         case DIALOG_SHOW_DETAILS:
-            if (extras == null || !extras.containsKey(Constants.KEY_DETAILS)) {
-                return null;
-            }
-
             builder = new AlertDialog.Builder(this);
             builder.setMessage("");
             if (extras.containsKey(Constants.KEY_NAME)) {
@@ -608,9 +611,13 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
     protected void onPrepareDialog(int id, Dialog dialog, Bundle args) {
         if (args.containsKey(Constants.KEY_NAME)) {
             dialog.setTitle(args.getString(Constants.KEY_NAME));
+        } else {
+            dialog.setTitle("");
         }
         if (args.containsKey(Constants.KEY_DETAILS)) {
             ((AlertDialog) dialog).setMessage(args.getString(Constants.KEY_DETAILS));
+        } else {
+            ((AlertDialog) dialog).setMessage("");
         }
         super.onPrepareDialog(id, dialog, args);
     }
