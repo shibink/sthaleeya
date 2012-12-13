@@ -24,12 +24,11 @@ import com.groupon.sthaleeya.osm.User;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class RetrieveFriendsTask extends AsyncTask<Object, Void, List<User>> {
+public class RetrieveFriendsTask extends AsyncTask<Object, Void, Long[]> {
     private static final String TAG="RetrieveFriendsTask";
 
     @Override
-    protected List<User> doInBackground(Object... a) {
-        List<User> friends=new ArrayList<User>();
+    protected Long[] doInBackground(Object... a) {
         try {
             HttpPost httppost = new HttpPost(
                     Constants.RETRIEVE_FRIENDS_URL );
@@ -53,12 +52,12 @@ public class RetrieveFriendsTask extends AsyncTask<Object, Void, List<User>> {
                 // parse json data
                 try {
                     JSONArray jArray = new JSONArray(stringBuilder.toString());
+                    Long[] friends=new Long[jArray.length()];
                     for (int i = 0; i < jArray.length(); i++) {
                         JSONObject json_data = jArray.getJSONObject(i);
-                        User friend=new User();
-                        friend.setId(json_data.getLong("id"));
-                        friends.add(friend);
+                        friends[i]=json_data.getLong("id");
                     }
+                    return friends;
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing data " + e.toString());
                 }
@@ -68,10 +67,10 @@ public class RetrieveFriendsTask extends AsyncTask<Object, Void, List<User>> {
         } catch (Exception e) {
             Log.i(TAG, e.getMessage());
         }
-        return friends;
+        return null;
    }
     @Override
-    protected void onPostExecute(List<User> a) {
+    protected void onPostExecute(Long[] a) {
         super.onPostExecute(a);
         OSMLoader.osmloader.pickFriendsActivity(a);
         

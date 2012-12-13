@@ -16,9 +16,13 @@
 
 package com.groupon.sthaleeya.osm;
 
+import java.util.HashMap;
 import java.util.List;
 
+import com.groupon.sthaleeya.Constants;
 import com.groupon.sthaleeya.R;
+import com.groupon.sthaleeya.utils.LocationUtil;
+
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -40,6 +44,7 @@ import com.facebook.widget.PickerFragment.GraphObjectFilter;
 public class PickFriendsActivity extends FragmentActivity {
     private String TAG="PickFriendsActivity";
     FriendPickerFragment friendPickerFragment;
+    HashMap friends=null;
 
     // A helper to simplify life for callers who want to populate a Bundle with the necessary
     // parameters. A more sophisticated Activity might define its own set of parameters; our needs
@@ -56,7 +61,15 @@ public class PickFriendsActivity extends FragmentActivity {
         setContentView(R.layout.pick_friends);
 
         FragmentManager fm = getSupportFragmentManager();
-
+        
+        Bundle extras = getIntent().getExtras();
+        if (extras != null && extras.containsKey("friends_ids")) {
+            long[] friends_ids = extras.getLongArray("friends_ids");
+            friends=new HashMap<Long,Integer>();
+            for(int i=0;i<friends_ids.length;i++){
+                friends.put(friends_ids[i], 1);
+            }
+        }
         if (savedInstanceState == null) {
             // First time through, we create our fragment programmatically.
             final Bundle args = getIntent().getExtras();
@@ -96,11 +109,8 @@ public class PickFriendsActivity extends FragmentActivity {
 
             @Override
             public boolean includeItem(GraphUser graphObject) {
-                for(User friend:OSMLoader.osmloader.friends){
-                    if(Long.parseLong(graphObject.getId())==(friend.getId())){
+                    if(friends.get(Long.parseLong(graphObject.getId()))!=null)
                         return false;
-                    }
-                }
                 return true;
             }
         });
