@@ -18,6 +18,7 @@ package com.groupon.sthaleeya.osm;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -39,9 +40,8 @@ import com.groupon.sthaleeya.R;
 // Activity creating a fragment (in this case a PlacePickerFragment) via XML layout rather than
 // programmatically.
 public class PickFriendsActivity extends FragmentActivity {
-    private String TAG="PickFriendsActivity";
     FriendPickerFragment friendPickerFragment;
-    HashMap friends=null;
+    Map<Long, Boolean> friendsMap = null;
 
     // A helper to simplify life for callers who want to populate a Bundle with the necessary
     // parameters. A more sophisticated Activity might define its own set of parameters; our needs
@@ -60,11 +60,13 @@ public class PickFriendsActivity extends FragmentActivity {
         FragmentManager fm = getSupportFragmentManager();
         
         Bundle extras = getIntent().getExtras();
-        if (extras != null && extras.containsKey("friends_ids")) {
-            long[] friends_ids = extras.getLongArray("friends_ids");
-            friends=new HashMap<Long,Integer>();
-            for(int i=0;i<friends_ids.length;i++){
-                friends.put(friends_ids[i], 1);
+        if (extras != null && extras.containsKey(Constants.FRIENDS_ID_KEY)) {
+            long[] friends_ids = extras.getLongArray(Constants.FRIENDS_ID_KEY);
+            if (friends_ids != null) {
+                friendsMap = new HashMap<Long, Boolean>();
+                for (int i = 0; i < friends_ids.length; i++) {
+                    friendsMap.put(friends_ids[i], true);
+                }
             }
         }
         if (savedInstanceState == null) {
@@ -102,12 +104,13 @@ public class PickFriendsActivity extends FragmentActivity {
                 finish();
             }
         });
-        friendPickerFragment.setFilter(new GraphObjectFilter<GraphUser>(){
+        friendPickerFragment.setFilter(new GraphObjectFilter<GraphUser>() {
 
             @Override
             public boolean includeItem(GraphUser graphObject) {
-                    if(friends.get(Long.parseLong(graphObject.getId()))!=null)
-                        return false;
+                if ((friendsMap != null)
+                        && friendsMap.containsKey(Long.parseLong(graphObject.getId())))
+                    return false;
                 return true;
             }
         });

@@ -18,17 +18,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.groupon.sthaleeya.osm.OSMLoader;
-import com.groupon.sthaleeya.osm.User;
-
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class RetrieveFriendsTask extends AsyncTask<Object, Void, Long[]> {
+import com.groupon.sthaleeya.osm.OSMLoader;
+
+public class RetrieveFriendsTask extends AsyncTask<Object, Void, long[]> {
     private static final String TAG="RetrieveFriendsTask";
 
     @Override
-    protected Long[] doInBackground(Object... a) {
+    protected long[] doInBackground(Object... a) {
         try {
             HttpPost httppost = new HttpPost(
                     Constants.RETRIEVE_FRIENDS_URL );
@@ -52,7 +51,7 @@ public class RetrieveFriendsTask extends AsyncTask<Object, Void, Long[]> {
                 // parse json data
                 try {
                     JSONArray jArray = new JSONArray(stringBuilder.toString());
-                    Long[] friends=new Long[jArray.length()];
+                    long[] friends=new long[jArray.length()];
                     for (int i = 0; i < jArray.length(); i++) {
                         JSONObject json_data = jArray.getJSONObject(i);
                         friends[i]=json_data.getLong("id");
@@ -70,9 +69,8 @@ public class RetrieveFriendsTask extends AsyncTask<Object, Void, Long[]> {
         return null;
    }
     @Override
-    protected void onPostExecute(Long[] a) {
+    protected void onPostExecute(long[] a) {
         super.onPostExecute(a);
         OSMLoader.osmloader.pickFriendsActivity(a);
-        
     }
 }

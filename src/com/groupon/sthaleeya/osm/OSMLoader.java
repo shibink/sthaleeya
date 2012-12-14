@@ -174,14 +174,15 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
         getUser(this.getSessionState());
     }
 
-    public void pickFriendsActivity(Long[] friends){
+    public void pickFriendsActivity(long[] friends){
         Intent intent = new Intent();
         intent.setComponent(new ComponentName("com.groupon.sthaleeya",
                 "com.groupon.sthaleeya.osm.PickFriendsActivity"));
-        intent.putExtra("friends_ids", friends);
+        intent.putExtra(Constants.FRIENDS_ID_KEY, friends);
         PickFriendsActivity.populateParameters(intent, null, true, true);
         startActivityForResult(intent, PICK_FRIENDS_ACTIVITY);
     }
+
     private void getUser(SessionState state){
         final ImageView addFriend = (ImageView) findViewById(R.id.add_friends_img);
         if (state != null && state.isOpened()) {
