@@ -25,7 +25,7 @@
     <string name="radius_prompt">Select Radius</string>
     <string name="category_prompt">Choose Category</string>
     <string name="upload_merchants">Upload Merchants</string>
-    <string name="empty_merchants">No merchants in this range</string>
+    <string name="empty_merchants">There are no open merchants now in the given range</string>
     <string name="app_id">482161775168123</string>
     <string name="userName"></string>
     <string name="select">Select Friends</string>

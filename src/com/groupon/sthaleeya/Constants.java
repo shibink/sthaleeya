@@ -69,9 +69,7 @@ public class Constants {
     public static final String KEY_DETAILS = "key_details";
     public static final String KEY_RADIUS = "key_radius";
     public static final String IS_MAP_VIEW = "is_map_view";
-    /*
-     * Time zone 
-     */
+
     public static final String MERCHANT_ID="merchant_id";
     public static final String TIMEZONE= "timezone";
     public static final String BUSINESS_TIMINGS_TABLE="business_timings";
@@ -81,6 +79,8 @@ public class Constants {
     public static final String BUSINESS_CLOSE_HR="closeHr";
     public static final String BUSINESS_CLOSE_MIN="closeMin";
     public static final String KEY_REFRESH_RATE = "refreshRate";
+    
+    public static final String FRIENDS_ID_KEY = "friends_ids";
     
     public static final String SERVER_URL = "http://10.1.23.243/sthaleeya_all.php";
     public static final String ADD_USER_URL = "http://10.1.23.243/add_user.php";

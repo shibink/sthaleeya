@@ -18,19 +18,19 @@ package com.groupon.sthaleeya.osm;
 
 import java.util.List;
 
-import com.groupon.sthaleeya.R;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 
 import com.facebook.FacebookException;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.FriendPickerFragment;
 import com.facebook.widget.PickerFragment;
 import com.facebook.widget.PickerFragment.GraphObjectFilter;
+import com.groupon.sthaleeya.Constants;
+import com.groupon.sthaleeya.R;
 
 // This class provides an example of an Activity that uses FriendPickerFragment to display a list of
 // the user's friends. It takes a programmatic approach to creating the FriendPickerFragment with the
@@ -87,7 +87,7 @@ public class PickFriendsActivity extends FragmentActivity {
             		friends_ids[i]=friends.get(i).getId();
             	}
             	Intent intent=new Intent();
-            	intent.putExtra("friends_ids", friends_ids);
+            	intent.putExtra(Constants.FRIENDS_ID_KEY, friends_ids);
                 setResult(RESULT_OK, intent);
                 finish();
             }

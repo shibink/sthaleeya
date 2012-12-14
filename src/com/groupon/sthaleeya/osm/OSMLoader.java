@@ -61,6 +61,8 @@ import com.groupon.sthaleeya.utils.LocationUtil;
  * Class to load open street map
  */
 public class OSMLoader extends FacebookActivity implements LocationListener {
+    private static final String USER_NAME = "userName";
+    private static final String USER_ID = "userId";
     private final int PICK_FRIENDS_ACTIVITY = 1;
     private static final int DIALOG_SHOW_DETAILS = 1;
     private static final String TAG = "OSMLoader";
@@ -74,8 +76,7 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
     public static enum MERCHANT_STATUS {
         CLOSED, ABOUT_TO_CLOSE, OPEN
     };
-    
-    
+
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss Z");
   
     private Category category = Category.ALL;
@@ -166,7 +167,7 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
             public void onClick(View v) {
                 SharedPreferences pref=getSharedPreferences(OSMLoader.PREFERENCE_FILE,0);
                 Object[] objectArray=new Object[1];
-                objectArray[0]=pref.getString("userId","0");
+                objectArray[0]=pref.getString(USER_ID,"0");
                 new RetrieveFriendsTask().execute(objectArray);
             }
         });
@@ -228,8 +229,8 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
     private void pushInSharedPref(String id, String name) {
         SharedPreferences pref = getSharedPreferences(OSMLoader.PREFERENCE_FILE, 0);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString("userId", id);
-        editor.putString("userName", name);
+        editor.putString(USER_ID, id);
+        editor.putString(USER_NAME, name);
         editor.commit();
     }
 
@@ -298,11 +299,11 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
         case PICK_FRIENDS_ACTIVITY:
             if(resultCode == RESULT_OK){
                 Bundle extras = data.getExtras();
-                if (extras != null && extras.containsKey("friends_ids")) {
-                    String[] friends_ids = extras.getStringArray("friends_ids");
+                if (extras != null && extras.containsKey(Constants.FRIENDS_ID_KEY)) {
+                    String[] friends_ids = extras.getStringArray(Constants.FRIENDS_ID_KEY);
                     SharedPreferences pref=getSharedPreferences(OSMLoader.PREFERENCE_FILE,0);
                     Object[] objectArray=new Object[2];
-                    objectArray[0]=pref.getString("userId","0");
+                    objectArray[0]=pref.getString(USER_ID,"0");
                     objectArray[1]=friends_ids;
                     new AddFriendsTask().execute(objectArray);
                 }
@@ -326,8 +327,8 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
                         handler.postDelayed(refreshMapRunnable, refreshRate);
                     }
                 }
-                if (extras != null && extras.containsKey("userName")) {
-                    String user = extras.getString("userName");
+                if (extras != null && extras.containsKey(USER_NAME)) {
+                    String user = extras.getString(USER_NAME);
                     TextView welcome = (TextView) findViewById(R.id.userName);
                     welcome.setText("Hello " + user + "!");
                     Log.i(TAG, welcome.getText() + "");
@@ -356,8 +357,8 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
         if (location != null) {
             Object[] object=new Object[4];
             SharedPreferences pref=getSharedPreferences(OSMLoader.PREFERENCE_FILE,0);
-            object[0]=pref.getString("userId","0");
-            object[1]=pref.getString("userName","");
+            object[0]=pref.getString(USER_ID,"0");
+            object[1]=pref.getString(USER_NAME,"");
             object[2]=location.getLatitude();
             object[3]=location.getLongitude();
             new AddUserTask().execute(object);
@@ -397,7 +398,7 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
 
     private void addMerchantsToDisplay() {
         SharedPreferences pref=getSharedPreferences(OSMLoader.PREFERENCE_FILE,0);
-        new GetAllMerchantsTask().execute(new Object[]{pref.getString("userId", null)});
+        new GetAllMerchantsTask().execute(new Object[]{pref.getString(USER_ID, null)});
     }
 
     public MERCHANT_STATUS getBusinessHour(Merchant merchant) {
@@ -436,7 +437,7 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
         }
 
         String userDescription = getSharedPreferences(OSMLoader.PREFERENCE_FILE, 0)
-                .getString("userName", null);
+                .getString(USER_NAME, null);
         if (userDescription == null) {
             userDescription = "";
         } else {
@@ -494,7 +495,6 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
 					day = hour / 24;
 					hour = hour %24;
                 } catch (ParseException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					continue;
 				}
