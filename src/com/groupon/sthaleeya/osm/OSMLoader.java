@@ -90,7 +90,6 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
     private Spinner category_selector;
     private ArrayList<OverlayItem> overlayItemArray = new ArrayList<OverlayItem>();
     public static final String PREFERENCE_FILE="user_data";
-    public List<User> friends=null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -175,11 +174,11 @@ public class OSMLoader extends FacebookActivity implements LocationListener {
         getUser(this.getSessionState());
     }
 
-    public void pickFriendsActivity(List<User> friends){
-        OSMLoader.this.friends=friends;
+    public void pickFriendsActivity(Long[] friends){
         Intent intent = new Intent();
         intent.setComponent(new ComponentName("com.groupon.sthaleeya",
                 "com.groupon.sthaleeya.osm.PickFriendsActivity"));
+        intent.putExtra("friends_ids", friends);
         PickFriendsActivity.populateParameters(intent, null, true, true);
         startActivityForResult(intent, PICK_FRIENDS_ACTIVITY);
     }
